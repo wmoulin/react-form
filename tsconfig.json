@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "emitDecoratorMetadata": true,    
+    "esModuleInterop": false,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "jsx": "react",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "target": "ES6",
+    "preserveSymlinks": true
+  },
+  "include": [
+    "app.tsx",
+    "src/**/*.ts*",
+    "test/**/*.ts*",
+  ],
+  "exclude": [
+    "istanbul"
+  ]
+}

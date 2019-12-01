@@ -1,0 +1,243 @@
+@import '../../sass/core';
+
+$formLabelRequired: theme-color('global', 'redError');
+$fieldsetLegendColor: theme-color($variant: 'secondary');
+$formSubtitleColor: theme-color($variant: 'primary');
+$formLabelSubtle: rgba(102, 102, 102, 1); //#666
+$formBorder: rgba(221, 221, 221, 1); //#ddd
+
+/// Stylisation des éléments secondaires des forms
+.chars-counter {
+    float: right;
+    position: relative;
+    margin-bottom: 0.75em;
+    min-width: 1em;
+    height: 1em;
+    color: $formLabelSubtle;
+    font-style: italic;
+}
+
+.chars-counter-too-many-char {
+    color: $formLabelRequired;
+}
+
+.fielderror-content {
+    color: $globalErrorColor;
+    font-style: italic;
+}
+
+.fieldset {
+    margin: 0 0 1.875em;
+    padding: 0;
+}
+
+.fieldset-legend {
+    color: $fieldsetLegendColor;
+    padding-bottom: 0.3em;
+    text-transform: uppercase;
+}
+
+.fieldset-content {
+    padding-top: 0.5em;
+    border-top: 1px solid $formBorder;
+}
+
+%buttonArea {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: 0.5% 0;
+}
+
+.form-content {
+    background-color: $formBgGlobal;
+    border-radius: 0.3em;
+    padding: 0.45em;
+    position: relative;
+
+    //si le formulaire est sticky
+    &-sticky {
+        /// ajout des boutons flottants
+        .button-area-isSticky {
+            @extend %buttonArea;
+            
+            .wrapButton {
+                flex: 1;
+            }
+        }
+
+        .button-area-isFixed.button-area-sticky {
+            @extend %buttonArea;
+            position: fixed;
+            background: rgba(198, 198, 198, 0.8);
+            bottom: 0;
+            left: 0;
+
+            .wrapButton {
+                max-width: 1000px;
+
+                @media (min-width: #{$mediaXXL}) {
+                    flex: 0 60%;
+                }
+            }
+        }   
+
+        .wrapButton {
+            display: flex;
+            justify-content: space-between;
+            flex-direction: row;
+            flex-wrap: nowrap;
+    
+            button {
+                margin: 0.3em 0em 0.3em 0.6em;
+                background: rgb(3, 71, 110) !important;
+                color: white;
+                flex-grow: 1;
+                &.primary {
+                    flex-shrink: 0;
+                    flex-basis: 500px;
+                };
+                &.secondary {
+                    flex-shrink: 1;
+                    flex-basis: 200px;
+                    background: rgba(3, 71, 110, 0.8)
+                }
+                &.tertiary {
+                    flex-shrink: 2;
+                    flex-basis: 100px;
+                    background: rgba(3, 71, 110, 0.6)
+                }
+                
+                &:last-child {
+                    margin-right: 0em !important;
+                }
+            }
+        }
+    }
+
+    .wrapButton {
+        display: flex;
+        justify-content: space-between;
+        flex-direction: row;
+        flex-wrap: nowrap;
+
+        button {
+            margin: 0.3em 0em 0.3em 0.6em;
+            background: rgb(3, 71, 110) !important;
+            color: white;
+            flex-grow: 1;
+            &.primary {
+                flex-shrink: 0;
+                flex-basis: 500px;
+            };
+            &.secondary {
+                flex-shrink: 1;
+                flex-basis: 200px;
+                background: rgba(3, 71, 110, 0.8)
+            }
+            &.tertiary {
+                flex-shrink: 2;
+                flex-basis: 100px;
+                background: rgba(3, 71, 110, 0.6)
+            }
+            
+            &:first-child {
+                margin-right: 0em !important;
+            }
+        }
+    }
+}
+
+.widget-dialogue-body {
+    .wrapButton {
+        display: flex;
+        justify-content: space-between;
+        flex-direction: row;
+        flex-wrap: nowrap;
+
+        button {
+            margin: 0.3em 0em 0.3em 0.6em;
+            background: rgb(3, 71, 110) !important;
+            color: white;
+            flex-grow: 1;
+            &.primary {
+                flex-shrink: 0;
+                flex-basis: 500px;
+            };
+            &.secondary {
+                flex-shrink: 1;
+                flex-basis: 200px;
+                background: rgba(3, 71, 110, 0.8)
+            }
+            &.tertiary {
+                flex-shrink: 2;
+                flex-basis: 100px;
+                background: rgba(3, 71, 110, 0.6)
+            }
+            
+            &:first-child {
+                margin-right: 0em !important;
+            }
+        }
+    }
+}
+
+.no-background {
+    .form-content {
+        background: transparent;
+        margin: 0;
+    }
+    .tabViewBody,
+    .button-area {
+       margin: 0.875em; 
+    }
+    .button-area {
+        width: auto !important;
+    }
+}
+
+.tabViewBody { 
+    section {
+        div {
+            &.component-spinner{
+                &.spinner-input {
+                    margin-top: 0px !important;
+                }
+            }
+        }
+    }
+}
+
+.form-soustitre {
+    color: $formSubtitleColor;
+    font-size: 1.0625em;
+    padding-top: 0.875em;
+}
+
+.form-titles {
+    padding: 0.875em 0.875em 0 0.875em;
+}
+
+.form {
+    background-color: $formBgGlobal;
+}
+
+.form-table {
+    background: none;
+    margin: -0.875em;
+}
+
+.form-container {
+    font-size: 1em;
+    font-family: $notoRegular;
+}
+
+.label-required {
+    color: $formLabelRequired;
+    padding-left: 0.313em;
+}
+
+.discret {
+    font-style: italic;
+    color: $formLabelSubtle;
+}
