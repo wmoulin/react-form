@@ -3,7 +3,7 @@
      * @param value valeur à utiliser
      * @returns {DomAdapter} cette instance
      */
-    export function setCurrentValue(elt, value: any): this {
+    export function setCurrentValue(elt, value: any): void {
       const strValue: string = (value != null && value.toString) ? value.toString() : "";
       if (Array.isArray(elt)) {
         for (let i = 0; i < elt.length; i++) {
@@ -90,7 +90,7 @@
                   /* Aucun fichier n'a été sélectionné : on récupère les informations de celui qui avait
                    éventuellement déjà été transmis */
                   // TODO à réactiver : voir pourquoi le composant UploadFileField ne peut être utilisé
-                  val = FormUtils.extractFileData(this.htmlElement as HTMLInputElement);
+                  val = "TODO file"; // TODO FormUtils.extractFileData(this.htmlElement as HTMLInputElement);
               }
           } else if (type === "number") {
               val = this.htmlElement.valueAsNumber;

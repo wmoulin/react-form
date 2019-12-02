@@ -1,0 +1,65 @@
+h1:first-child,
+h2:first-child,
+h3:first-child,
+h4:first-child,
+h5:first-child,
+h6:first-child {
+    margin-top: 0;
+}
+
+.clear {
+    clear: both;
+}
+
+.clearfix {
+    &::after {
+        content: "";
+        display: table;
+        clear: both;
+        border-collapse: collapse;
+    }
+}
+
+.left {
+    margin-right: auto;
+}
+
+.right {
+    margin-left: auto;
+}
+
+.center {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.inside {
+    margin: 0 auto;
+    padding: 0 1.65em;
+    height: 100%;
+}
+
+.txtcenter {
+    text-align: center;
+}
+
+.fl {
+    float: left;
+}
+
+img.fl {
+    margin-right: 1rem;
+}
+
+.fr {
+    float: right;
+}
+
+img.fr {
+    margin-left: 1rem;
+}
+
+img.fl,
+img.fr {
+    margin-bottom: 0.5rem;
+}

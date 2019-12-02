@@ -2,8 +2,16 @@
 node_modules
 
 # typescript
+app.js
+*.js.map
 ./**/*.js
 ./**/*.js.map
+*.js.map
+./**/*.d.ts
+*.d.ts
 
 #vscode
 .history
+
+#webpack
+static

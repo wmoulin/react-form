@@ -1,0 +1,145 @@
+/// Génère un alignement flex aux enfants centrés
+@mixin flexCentered() {
+    display: flex;
+    align-items: center;
+}
+
+/// gestion d'animation des états hover
+/// $attr : attribut à animer
+/// $duration : durée de l'animation
+@mixin smoothTransition($attr, $duration) {
+    transition: $attr $duration ease-in-out;
+}
+
+/// Génère un bg contenant un sprite via un mask - permet de changer la couleur du svg
+@mixin svgAsBackground($color, $url, $position : center) {
+    mask: url($url) no-repeat $position;
+    background-color: $color;
+}
+
+/// automatisation de la création des éléments du menu
+/// $tranform : degré de rotation pour le tranform
+/// $position : positionnement de l'élément
+@mixin createMenu($tranform, $color, $position: "") {
+    position: relative;
+    display: inline-block;
+    width: 0.4em;
+    height: 0.4em;
+    left: 1em;
+
+    @if $position != "" {
+        bottom: $position
+    }
+
+    content: "";
+    border-right: 0.15em solid $color;
+    border-top: 0.15em solid $color;
+    transform: rotate($tranform);
+}
+
+/// Automatisation des messages d'alerte
+/// $class : nom de la classe ciblée
+/// $title : font-family de l'élément title
+/// $text : font-family de l'élément text
+/// $color : (optionnel) couleur des border
+@mixin message($class, $title, $text, $color:"") {
+    .#{$class}-message {
+        margin-top: 1em;
+        margin-bottom: 1em;
+        padding: 0.5em 1em;
+        @if $color != "" {
+            border: 0.063em solid $color;
+        }
+
+        .#{$class}-message-title {
+            display: block;
+            padding-left: 1.875em;
+            font-family: $title;
+            font-size: 1em;
+            font-style: italic;
+            font-weight: lighter;
+            text-transform: none;
+
+            @if $color != "" {
+                color: $color;
+            }
+        }
+
+        .#{$class}-message-list {
+            padding-left: 3em;
+            font-family: $text;
+            font-size: 1em;
+            font-style: italic;
+            list-style: outside none none;
+            
+            @if $color != "" {
+                color: $color;
+            }
+        }
+
+        .#{$class}-message-text {
+            font-family: $text;
+            font-size: 1em;
+            font-style: italic;
+            
+            @if $color != "" {
+                color: $color;
+            }
+        
+            &:hover {
+                @if $color != "" {
+                    color: $color;
+                }
+            }
+        }
+    }
+}
+
+/// Automatisation de la création des flèches dans le drop down
+/// $cPosition : nom du label compléter la classe
+/// $top, $left, $bottom : positionnement de l'élément
+/// $zIndex (optionnel) : zIndex de l'élément
+@mixin arrowDropdown($cPosition, $top: "", $left: "", $bottom: "", $zIndex: "") {
+    .arrow.position-#{$cPosition} {
+        content: '';
+        position: absolute;
+        width: 1em;
+        height: 1em;
+
+        @if $zIndex != "" {
+            z-index: $zIndex;
+        }
+
+        @if $top != "" {
+            top: $top;
+        }
+
+        @if $left != "" {
+            left: $left
+        }
+
+        @if $bottom != "" {
+            bottom: $bottom;
+        }
+        
+        background: theme-color('global', 'white');
+        transform: rotate(45deg);
+        @if $cPosition != "top-left" {
+            box-shadow: -0.0625em -0.0625em 0.0625em 0 rgba(0, 0, 0, 0.25);
+        } @else if $cPosition != "top-right"{
+            box-shadow: 0.0625em 0.0625em 0.0625em 0 rgba(0, 0, 0, 0.25);
+        } @else  {
+            box-shadow: 0.062em 0.062em 0.063em 0 rgba(0,0,0,0.25);
+        }
+    }
+}
+
+/// Génère les appels font-face
+// @mixin font-face($font-name, $file-name, $weight: normal, $style: normal) { 
+//     @font-face {
+//       font-family: quote($font-name);
+//       src: url($file-name + '.ttf')  format('truetype');
+//       font-weight: $weight;
+//       font-style: $style;
+//     }
+// }

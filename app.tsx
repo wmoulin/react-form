@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Form } from "src/index.ts";
+import { Form } from "src/index";
 
 function App() {
   return (

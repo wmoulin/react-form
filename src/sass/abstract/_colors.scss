@@ -1,0 +1,21 @@
+@import 'theming';
+
+/// Contient les couleurs globales
+$baseColorLight: theme-color('global', 'white');
+$baseColorDark: theme-color('global', 'dark');
+$globalErrorColor: theme-color('global', 'redError');
+$globalErrorBg: theme-color('global', 'redErrorlight');
+$globalWarningColor: theme-color('global', 'orangeWarning');
+$globalInfoColor: theme-color('global', 'greenInfos');
+$globalSiteBg: rgba(243, 243, 243, 1); //#f3f3f3
+$globalTitleColor: theme-color('global', 'blueTitles');
+$globalSubTitle: theme-color($variant: 'primary');
+$globalLinkColor: theme-color($variant: 'primary');
+$globalPageSiteColor: theme-color('global', 'texts');
+$buttonBoxShadow: theme-color('global', 'boxShadows');
+$calendarBaseColor: theme-color('global', 'white');
+$calendarPrimaryColor: theme-color($variant: 'primary');
+$calendarSecondaryColor: rgba(102, 102, 102, 1); //#666
+$formBgGlobal: rgba(244, 244, 244, 1); //#f4f4f4
+$tableBaseColor: theme-color('global', 'white');
+$tableHeaderColor: theme-color($variant: 'primary');

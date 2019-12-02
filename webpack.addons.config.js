@@ -21,20 +21,11 @@ const dev = {
 }
 
 const externals = [
-        new RegExp(path.join("src", "services", "data") + "/.*"),
-        /src\/middleware\/.*/,
-        new RegExp(path.join("src", "services", "data") + "/.*-data-\.*"),
-        "config",
-        "continuation-local-storage",
-        "pdfmake",
-        "carbone",
-        "csv-parser",
-        "nodemailer",
-        "tls",
-        "child_process",
-        "net",
-        "fs",
-        "dns"
+    new RegExp(path.join("src", "services", "data") + "/.*"),
+    /src\/middleware\/.*/,
+    new RegExp(path.join("src", "services", "data") + "/.*-data-\.*"),
+    "config",
+    "continuation-local-storage"
 ]
 
 module.exports = (project, conf, helper, webpackConfigPart, configuration, webpack) => {
@@ -48,7 +39,19 @@ module.exports = (project, conf, helper, webpackConfigPart, configuration, webpa
     }
     return {
         ...configuration,
-        plugins: [...configuration.plugins, ...projectPlugins, new HtmlWebpackPlugin( {template: "./src/index.html", filename: "./index.html"})],
+        entry: {
+            client: [
+                "webpack-dev-server/client?http://localhost:9000",
+                "webpack/hot/only-dev-server",
+                "./app.js",
+            ]
+        },
+        plugins: [
+            ...configuration.plugins,
+            ...projectPlugins,
+            new HtmlWebpackPlugin( {template: "./src/index.html", filename: "./index.html"}),
+            new webpack.HotModuleReplacementPlugin()
+        ],
         externals : (context, request, callback) => {
             if(/log4js\/lib\/appenders/.test(context) && (!/console/.test(request)) && (/^\.\//.test(request))) {
                 return callback(null, "{}");
@@ -77,9 +80,11 @@ module.exports = (project, conf, helper, webpackConfigPart, configuration, webpa
             aggregateTimeout: 3000
         },
         devServer: {
-            contentBase: path.join(__dirname, 'dist'),
+            contentBase: path.join(__dirname, 'static'),
             compress: true,
-            port: 9000
+            port: 9000,
+            hot: true,
+            watchContentBase: true
         }
     }
 

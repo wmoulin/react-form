@@ -11,10 +11,15 @@
     "lodash.isempty": "^4.4.0",
     "lodash.isstring": "^4.0.1",
     "lodash.set": "^4.3.2",
-    "react": "^16.12.0"
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0"
   },
   "devDependencies": {
     "@types/node": "^10.17.6",
-    "html-webpack-plugin": "~3.2.0"
-  }
+    "html-webpack-plugin": "^3.2.0",
+    "loader-utils": "^1.2.3",
+    "webpack": "^4.41.2",
+    "webpack-dev-server": "^3.9.0"
+  },
+  "types": "./index.d.ts"
 }

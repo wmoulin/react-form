@@ -1,0 +1,316 @@
+
+/// fichier de référence, ne contient aucune variable ni aucun mixin
+@font-face {
+    font-family: "NotoSansUI-Regular";
+    src: url($PATH_FONT + 'NotoSansUI-Regular.ttf') format("truetype");
+    font-weight: normal;
+    font-style: normal
+}
+@font-face {
+    font-family: "NotoSansUI-Bold";
+    src: url($PATH_FONT + 'NotoSansUI-Bold.ttf') format("truetype");
+    font-weight: normal;
+    font-style: normal
+}
+@font-face {
+    font-family: "Roboto";
+    src: url($PATH_FONT + 'Roboto-Regular.ttf') format("truetype");
+    font-weight: normal;
+    font-style: normal
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: inherit;
+}
+
+html {
+    font-size: calc(1em * 0.625);
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    font-family: "NotoSansUI-Regular";
+    font-size: 1.6rem;
+    background-color: white;
+    line-height: 1.5;
+}
+
+#site {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    min-height: 100vh;
+    padding-top: 6.188em;
+}
+
+#page {
+    flex-grow: 1;
+    width: 100%;
+    margin: auto;
+    padding: 0 1.85em 4em 1.85em;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    color: rgba(35, 36, 37, 1);
+}
+
+h1 {
+    font-family: "NotoSansUI-Bold";
+    font-size: 1.5625em;
+    color: white;
+    text-transform: uppercase;
+
+    @media (max-width: 405px) {
+        margin-top: 5px !important;
+        font-size: 15px !important;
+    }
+
+    @media (max-width: 500px) {
+        font-size: 18px;
+    }
+}
+
+h2 {
+    font-family: "NotoSansUI-Bold";
+    font-size: 1.875em;
+    color: rgba(2, 64, 86, 1);
+    padding: 0.438em 0 0 0;
+}
+
+h3 {
+    font-family: "NotoSansUI-Regular";
+    font-size: 1.25em;
+    color: rgba(5, 121, 190, 1);
+    text-transform: uppercase;
+    padding: 0.6em 0 0 0;
+}
+
+%subTitles {
+    font-family: "NotoSansUI-Regular";
+    color: rgba(5, 121, 190, 1);
+    text-transform: uppercase;
+}
+
+h4 {
+    @extend %subTitles;
+    font-size: 1.0625em;
+    
+}
+
+h5 {
+    @extend %subTitles;
+}
+
+#img-logo {
+    img {
+        margin: 0 0.5em;
+    }
+}
+
+#app-title {
+    margin: 0 0.5em;
+}
+
+#pageAccueil {
+    padding-top: 2em;
+}
+
+.language-arrow-down {
+    @media (max-width: 416px) {
+        .inside {
+            padding: 0 1.1em;
+        }
+    }
+}
+
+input[type="text"] {
+    transition: all 0.3s ease-in-out;
+
+    &:focus,
+    &:hover {
+        outline: 1px solid rgba(77, 144, 254, 1);
+    }
+}
+
+.full-height {
+    height: 100%;
+}
+
+a {
+    color: rgba(5, 121, 190, 1);
+    text-decoration: none;
+    transition: all 0.3s ease-in-out;
+}
+
+p {
+    margin-top: 0.5em;
+}
+
+.visible {
+    height: auto;
+}
+
+.hidden {
+    overflow: hidden;
+    height: 0;
+}
+
+abbr[title] {
+    text-decoration: none !important;
+    padding-bottom: 0.2px;
+    border-bottom: grey 1px dotted !important;
+}
+
+.label-required {
+    abbr[title] {
+        border-bottom: 0 !important;
+        text-decoration: underline dotted !important;
+    }
+}
+
+.container-input-croix {
+    position: relative;
+}
+
+.field-inline {
+    margin-right: 3em;
+}
+
+@media (max-width: 720px) {
+    #img-logo,
+    .button-info-accessibilite {
+        display: none;
+    }
+}
+
+@media (max-width: 405px) {
+    .profil-content {
+        a.username {
+            font-size: 0.75em;
+        }
+    }
+    #page {
+        padding: 0 0.4em 2em 0.4em;
+    }
+}
+
+@media (max-width: 675px) {
+    .has-gutter {
+        margin-left: 0 !important;
+    }
+}
+
+#nf-img {
+    max-width: 100%;
+    height: 28.625em;
+    background: url($PATH_IMG + "vide.png") no-repeat center;
+    background-size: contain;
+
+    @media (max-width: 500px) {
+        height: 9em;
+    }
+}
+
+#nfe-page {
+    padding-top: 5%;
+    text-align: center;
+}
+
+.nfe-title {
+    font-size: 1.25em;
+    font-family: "NotoSansUI-Bold";
+    color: black;
+}
+
+.hornet-button {
+    &.nfe-button {
+        margin-left: 1.5em;
+    }
+}
+
+.larger-screen {
+    position: relative;
+    padding: 0.35em;
+
+    .icon {
+        vertical-align: top;
+        width: 1.5em;
+        height: 1.5em;
+    }
+
+    &:hover {
+        cursor: pointer;
+    }
+
+    @media (max-width: 1200px) {
+        display: none !important;
+    }
+}
+
+@media (max-width: 1200px) {
+    .sticky {
+        .dropdown-button {
+            line-height: 3em;
+        }
+    }
+}
+
+@media screen and (min-width:0\0) {
+    #auth #site {
+        flex-direction: row;
+    }
+    .input-reset {
+        img {
+            width: 8%;
+        }
+    }
+    .larger-screen {
+        .icon {
+            width: 10%;
+        }
+    }
+
+    .dropdown-button {
+        padding-left: 0;
+    }
+
+    .imgItem {
+        padding-right: 10px;
+        width: 26px;
+    }
+
+    .tabviewHeaderContent {
+        height: 2.6em;
+    }
+
+    input[type=text]::-ms-clear {
+        display: none;
+    }
+
+    .datatable-cell {
+        .button-action {
+            padding: 0;
+        }
+    }
+}
+
+@media screen and (-ms-high-contrast: active),
+(-ms-high-contrast: none) {
+    img[src$=".svg"] {
+        width: 26px;
+    }
+}
+
+.hidden-alert-div {
+    position: absolute;
+    left: -100em;
+}
+
+ul.footer-links {
+    a:hover,
+    a:focus {
+        color: black;
+    }
+}
