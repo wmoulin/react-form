@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import { Form } from "src/index.ts";
 
 function App() {
@@ -12,5 +13,7 @@ function App() {
     </div>
   );
 }
+
+ReactDOM.render(<App />, document.getElementById("app"));
 
 export default App;

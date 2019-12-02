@@ -1,4 +1,5 @@
 const path = require("path");
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const clientContext = [
     [/moment[\/\\]locale$/, /fr|en/],
@@ -47,35 +48,39 @@ module.exports = (project, conf, helper, webpackConfigPart, configuration, webpa
     }
     return {
         ...configuration,
-        plugins: [...configuration.plugins, ...projectPlugins,
-        ],
+        plugins: [...configuration.plugins, ...projectPlugins, new HtmlWebpackPlugin( {template: "./src/index.html", filename: "./index.html"})],
         externals : (context, request, callback) => {
-                if(/log4js\/lib\/appenders/.test(context) && (!/console/.test(request)) && (/^\.\//.test(request))) {
-                    return callback(null, "{}");
-                } 
-                for (let i = 0; i < externals.length; i++) {
-                    let extern = externals[i];
-                    if (extern.test) { // c'est une regexp'
-                        if (extern.test(request)) {
-                            return callback(null, "{}");
-                        }
-                    } else if (request == extern) {
+            if(/log4js\/lib\/appenders/.test(context) && (!/console/.test(request)) && (/^\.\//.test(request))) {
+                return callback(null, "{}");
+            } 
+            for (let i = 0; i < externals.length; i++) {
+                let extern = externals[i];
+                if (extern.test) { // c'est une regexp'
+                    if (extern.test(request)) {
                         return callback(null, "{}");
                     }
+                } else if (request == extern) {
+                    return callback(null, "{}");
                 }
-
-                return callback();
-            },
-            optimization: {
-                splitChunks: {
-                    chunks: 'all',
-                    minChunks: 3,
-                    minSize: 3000000
-                },
-            },
-            watchOptions: {
-                aggregateTimeout: 3000
             }
+
+            return callback();
+        },
+        optimization: {
+            splitChunks: {
+                chunks: 'all',
+                minChunks: 3,
+                minSize: 3000000
+            },
+        },
+        watchOptions: {
+            aggregateTimeout: 3000
+        },
+        devServer: {
+            contentBase: path.join(__dirname, 'dist'),
+            compress: true,
+            port: 9000
+        }
     }
 
 }

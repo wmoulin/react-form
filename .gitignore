@@ -1,1 +1,9 @@
+# module npm
 node_modules
+
+# typescript
+./**/*.js
+./**/*.js.map
+
+#vscode
+.history
