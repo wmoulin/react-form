@@ -9,7 +9,7 @@ import set = require("lodash.set");
 import { ErrorObject, DependenciesParams } from 'ajv';
 import { CLEAN_NOTIFICATION_EVENT, ADD_NOTIFICATION_EVENT } from "src/events/notification-events";
 import { fireEvent } from "src/events/event-manager";
-import { Notifications, NotificationType } from "src/events/notification";
+import { Notifications, NotificationType, INotificationType } from "src/events/notification";
 const IntlMessageFormat = require("intl-messageformat");
 import isEmpty = require("lodash.isempty");
 import isString = require("lodash.isstring");
@@ -30,85 +30,31 @@ export const Form: React.FC<FormProps> = (props: FormProps) => {
 
     logger.debug("Form render : ", props.id);
 
-
-    /* La validation de formulaire HTML 5 est désactivée (noValidate="true") :
-     on s'appuie uniquement sur la validation à la soumission et on a ainsi un rendu cohérent entre navigateurs. */
-
-    const formProps = {...props,  // TODO filter form attributes
-        method: "post",
-        onSubmit: debounced(validateAndSubmit, 500),
-        ref: fromElt,
-    };
-
-    let formClass = {
-        "form-content": true,
-        "form-content-sticky": props.sticky
-    }
-
-    if (this.isMultiPartForm(this.state.children)) {
-        formProps["encType"] = "multipart/form-data";
-    }
-
-    const textHtmlProps = {
-        lang: props.textLang ? props.textLang : null,
-    };
-
-    // hook for filter html standards props 
-    return (
-        <section id="form-content" className={classNames(formClass)}>
-            <form {...formProps}>
-                {(props.subTitle || props.text
-                    || (markRequired && !this.state.isMandatoryFieldsHidden)) ?
-                    <div className="form-titles">
-                        {props.subTitle ? <h3 className="form-soustitre">{props.subTitle}</h3> : null}
-                        {props.text ?
-                            <p className="form-texte" {...textHtmlProps}>{props.text}</p> : null}
-                        {markRequired ?
-                            <p className="discret">{I18nUtils.getI18n("form.fillField")}</p> : null}
-                    </div>
-                    : null}
-                {(props.children) ?
-                    <div className="form-content">
-                        {props.children}
-                    </div>
-                    : null}
-            </form>
-        </section>
-    );
-
-
-    /***
-     * 
-     * 
-     * 
-     * 
-     */
-
      /**
- * Déclenche la validation du formulaire, notifie les erreurs éventuelles et exécute la fonction
- * onSubmit présente dans les propriétés s'il n'y a pas d'erreurs
- *
- */
-function validateAndSubmit() {
-    if (this.formElement) {
-        logger.trace("Validation et envoi du formulaire");
+     * Déclenche la validation du formulaire, notifie les erreurs éventuelles et exécute la fonction
+     * onSubmit présente dans les propriétés s'il n'y a pas d'erreurs
+     *
+     */
+    const validateAndSubmit = () => {
+        if (fromElt) {
+            logger.trace("Validation et envoi du formulaire");
 
-        const data = extractData(props.omitNull);
-        const schema = DataValidator.transformRequiredStrings(props.schema);
+            const data = extractData(props.omitNull);
+            const schema = DataValidator.transformRequiredStrings(props.schema);
 
-        const validationRes: IValidationResult = this.getValidationResult(schema, data);
+            const validationRes: IValidationResult = this.getValidationResult(schema, data);
 
-        if (!validationRes.valid) {
-            this.notifyErrors(validationRes.errors);
-        } else {
-            this.cleanFormErrors();
-            if (props.onSubmit) {
-                transformDatesToISO(schema, data, props.calendarLocale | I18nUtils.getI18n("calendar") || {});
-                props.onSubmit(data);
+            if (!validationRes.valid) {
+                notifyErrors(validationRes.errors);
+            } else {
+                this.cleanFormErrors();
+                if (props.onSubmit) {
+                    transformDatesToISO(schema, data, props.calendarLocale | I18nUtils.getI18n("calendar") || {});
+                    props.onSubmit(data);
+                }
             }
         }
     }
-}
 
   /**
      * Extrait les données du formulaire
@@ -116,7 +62,7 @@ function validateAndSubmit() {
      * être présents dans l'objet résultat.
      * @returns {Object}
      */
-    function extractData(removeEmptyStrings: boolean = true): Object {
+    const extractData = (removeEmptyStrings: boolean = true): Object => {
         const data: Object = {};
         const fields: { [key: string]: FormElement } = extractFields();
         for (const name in fields) {
@@ -158,8 +104,7 @@ function validateAndSubmit() {
         return data;
     }
 
-        /** @override */
-        function extractFields(): { [key: string]: FormElement } {
+        const extractFields = (): { [key: string]: FormElement } => {
             const fields: { [key: string]: FormElement } = {};
             if (fromElt.current) {
                 for (let index = 0; index < fromElt.current.elements.length; index++) {
@@ -177,11 +122,11 @@ function validateAndSubmit() {
             return fields;
         }
 
-            /**
+    /**
      * Déclenche les notifications correspondant aux éventuelles erreurs de validation
      * @param errors erreurs de validation de formulaire, éventuellement vides
      */
-    function notifyErrors(errors: Array<ErrorObject>): void {
+    const notifyErrors = (errors: Array<ErrorObject>): void => {
         if (errors) {
             const fieldsMessages = this.state.formMessages && this.state.formMessages.fields;
             const genericValidationMessages = this.i18n("form.validation");
@@ -193,16 +138,30 @@ function validateAndSubmit() {
             this.processAutocompleteErrors(fields, notificationsError);
 
             /* Met à jour les erreurs affichées par chaque composant champ */
-            Object.keys(fields).every(function (key: string): boolean {
+            Object.keys(fields).forEach((key: string) => {
                 const field: FormElement = fields[key];
-                if (field instanceof AbstractField) {
-                    field.setErrors(notificationsError.getNotifications());
+
+                let errors = this.state.errors.filter((error: INotificationType): boolean => {
+                    return (error.field === this.state.name || error.field === this.state.name + "." + this.state.labelKey
+                        || (error.additionalInfos
+                            && error.additionalInfos.linkedFieldsName
+                            && error.additionalInfos.linkedFieldsName.indexOf(this.state.name) > -1)
+                    );
+                });
+
+                if (errors && errors.length > 0) {
+                    field.classList.remove("error");
+                    field.setAttribute ("aria-invalid", "true");
+                    field.setAttribute("data-error-msg", errors.map((item) => item.text).join(",")); 
+                } else {
+                    field.classList.remove("error");
+                    field.setAttribute("aria-invalid", "false");
+                    field.setAttribute("data-error-msg", ""); 
                 }
-                return true;
             });
 
             /* Emission des notifications */
-            fireEvent(ADD_NOTIFICATION_EVENT.withData({ notifId, id, notificationsError}));
+            fireEvent(ADD_NOTIFICATION_EVENT.withData({ notifyId: props.notifId, idComponent: props.id, errors: notificationsError}));
         }
     }
 
@@ -210,16 +169,67 @@ function validateAndSubmit() {
     /**
      * Supprime les nofifications d'erreurs et les erreurs associées à chaque champ de ce formulaire
      */
-    function cleanFormErrors(): void {
+    const cleanFormErrors = (): void => {
         const fields: { [key: string]: FormElement } = this.extractFields();
         for (const fieldName in fields) {
             const field: FormElement = fields[fieldName];
-            if (field instanceof AbstractField) {
-                (field as AbstractField<any, any>).setErrors(null);
-            }
+
+            // basic html
+            field.classList.remove("error");
         }
-        fireEvent(CLEAN_NOTIFICATION_EVENT.withData({ notifId, id }));
+        fireEvent(CLEAN_NOTIFICATION_EVENT.withData({ notifyId: props.notifId, idComponent: props.id }));
     }
+
+    /*
+     * RENDER
+     * -----------------------------------------------------------------
+     */
+    /* La validation de formulaire HTML 5 est désactivée (noValidate="true") :
+     on s'appuie uniquement sur la validation à la soumission et on a ainsi un rendu cohérent entre navigateurs. */
+
+     const formProps = {...props,  // TODO filter form attributes
+        method: "post",
+        onSubmit: debounced(validateAndSubmit, 500),
+        ref: fromElt,
+    };
+
+    let formClass = {
+        "form-content": true,
+        "form-content-sticky": props.sticky
+    }
+
+    if (this.isMultiPartForm(this.state.children)) {
+        formProps["encType"] = "multipart/form-data";
+    }
+
+    const textHtmlProps = {
+        lang: props.textLang ? props.textLang : null,
+    };
+
+    return (
+        <section id="form-content" className={classNames(formClass)}>
+            <form {...formProps}>
+                {(props.subTitle || props.text
+                    || (markRequired && !this.state.isMandatoryFieldsHidden)) ?
+                    <div className="form-titles">
+                        {props.subTitle ? <h3 className="form-soustitre">{props.subTitle}</h3> : null}
+                        {props.text ?
+                            <p className="form-texte" {...textHtmlProps}>{props.text}</p> : null}
+                        {markRequired ?
+                            <p className="discret">{I18nUtils.getI18n("form.fillField")}</p> : null}
+                    </div>
+                    : null}
+                {(props.children) ?
+                    <div className="form-content">
+                        {props.children}
+                    </div>
+                    : null}
+            </form>
+        </section>
+    );
+
+
+
 
 };
 

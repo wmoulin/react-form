@@ -5,7 +5,7 @@ export interface AddNotificationEventDetail {
     errors?: any;
     infos?: any;
     warnings?: any;
-    id?: string;
+    notifyId?: string;
     exceptions?: Array<BaseError>;
     personnals?: any;
     idComponent?: string;
@@ -13,7 +13,7 @@ export interface AddNotificationEventDetail {
 }
 
 export interface CleanNotificationEventDetail {
-    id?: string;
+    notifyId?: string;
     idComponent?: string;
 }
 
