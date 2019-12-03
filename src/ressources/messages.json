@@ -1,0 +1,47 @@
+{
+    "messages": {
+        "form": {
+            "requiredLabel": "Saisie obligatoire",
+            "valid": "Valider",
+            "validTitle": "Valider la saisie du formulaire",
+            "cancel": "Annuler",
+            "cancelTitle": "Annuler la saisie du formulaire",
+            "reinit": "Réinitialiser",
+            "reinitTitle": "Réinitialiser les champs de saisie du formulaire",
+            "search": "Rechercher",
+            "searchTitle": "Rechercher à partir des données du formulaire",
+            "fillField": "Les champs marqués d'un astérisque (*) doivent être renseignés.",
+            "submitData": "Données soumises:",
+            "atLine": ", à la ligne {line}",
+            "close": "Vider le champ",
+            "validation": {
+                "generic": "La valeur du champ « {field} » est incorrecte.",
+                "multipleOf": "La valeur du champ « {field} » est incorrecte.",
+                "maximum": "La valeur du champ « {field} » est supérieure au maximum autorisé.",
+                "exclusiveMaximum": "La valeur du champ « {field} » est supérieure au maximum autorisé.",
+                "minimum": "La valeur du champ « {field} » est inférieure au minimum requis.",
+                "exclusiveMinimum": "La valeur du champ « {field} » est inférieure au minimum requis.",
+                "maxLength": "Le champ « {field} » excède le nombre maximum de caractères autorisé. Veuillez corriger la saisie de ce champ.",
+                "minLength": "Le nombre de caractères du champ « {field} » est inférieur au minimum requis.",
+                "pattern": "Le format du champ « {field} » est incorrect.",
+                "format": "Le format du champ « {field} » est incorrect.",
+                "additionalItems": "Un ou plusieurs éléments non valides ont été sélectionnés dans le champ « {field} ».",
+                "items": "Un ou plusieurs éléments non valides ont été sélectionnés dans le champ « {field} ».",
+                "maxItems": "Le nombre d'éléments sélectionnés pour le champ « {field} » est supérieur au maximum autorisé.",
+                "minItems": "Le nombre d'éléments sélectionnés pour le champ « {field} » est inférieur au minimum requis.",
+                "uniqueItems": "Le champ « {field} » ne doit pas contenir de doublons.",
+                "enum": "Le champ « {field} » a une propriété dont la valeur n'est pas dans la liste de valeurs autorisées.",
+                "required": "Le champ « {field} » est obligatoire. Veuillez saisir ce champ.",
+                "formatMinimum": "La valeur du champ « {field} » est inférieure au minimum requis.",
+                "formatMaximum": "La valeur du champ « {field} » est supérieure au maximum autorisé.",
+                "switch": "La valeur du champ « {field} » est incorrecte."
+            }
+        },
+        "calendar": {
+            "timeZone": "Europe/Paris",
+            "timezoneOffset": 60
+        }
+    }
+}
+    
+    

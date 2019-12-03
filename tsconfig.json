@@ -16,6 +16,7 @@
   },
   "include": [
     "app.tsx",
+    "server.ts",
     "src/**/*.ts*",
     "test/**/*.ts*",
   ],

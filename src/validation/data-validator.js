@@ -117,5 +117,4 @@ DataValidator.DEFAULT_VALIDATION_OPTIONS = {
     format: "full"
 };
 exports.DataValidator = DataValidator;
-
 //# sourceMappingURL=data-validator.js.map

@@ -1,6 +1,6 @@
-import classNames from "classnames";
+import * as classNames from "classnames";
 import "src/sass/form.scss";
-import React, { useState, useRef } from 'react';
+import * as React from 'react';
 import { I18nUtils } from "hornet-js-utils/src/i18n-utils";
 import { Utils } from "hornet-js-utils";
 import { DataValidator, IValidationResult } from 'src/validation/data-validator';
@@ -10,9 +10,11 @@ import { ErrorObject, DependenciesParams } from 'ajv';
 import { CLEAN_NOTIFICATION_EVENT, ADD_NOTIFICATION_EVENT } from "src/events/notification-events";
 import { fireEvent } from "src/events/event-manager";
 import { Notifications, NotificationType, INotificationType } from "src/events/notification";
-const IntlMessageFormat = require("intl-messageformat");
+import IntlMessageFormat from "intl-messageformat";
 import isEmpty = require("lodash.isempty");
 import isString = require("lodash.isstring");
+const messages = require("src/ressources/messages.json");
+
 
 const logger = console;
 
@@ -25,8 +27,9 @@ export type FormProps = {
 type FormElement = React.Element | React.HtmlElement;
 
 export const Form: React.FC<FormProps> = (props: FormProps) => {
-    const [markRequired, setMarkRequired] = useState(props.markRequired || false);
-    const fromElt = useRef(null);
+    const [markRequired, setMarkRequired] = React.useState(props.markRequired || false);
+    const fromElt = React.useRef(null);
+    const i18nMessages = Utils.getCls("hornet.internationalization") || messages;
 
     logger.debug("Form render : ", props.id);
 
@@ -42,14 +45,14 @@ export const Form: React.FC<FormProps> = (props: FormProps) => {
             const data = extractData(props.omitNull);
             const schema = DataValidator.transformRequiredStrings(props.schema);
 
-            const validationRes: IValidationResult = this.getValidationResult(schema, data);
+            const validationRes: IValidationResult = getValidationResult(schema, data);
 
             if (!validationRes.valid) {
                 notifyErrors(validationRes.errors);
             } else {
-                this.cleanFormErrors();
+                cleanFormErrors();
                 if (props.onSubmit) {
-                    transformDatesToISO(schema, data, props.calendarLocale | I18nUtils.getI18n("calendar") || {});
+                    transformDatesToISO(schema, data, props.calendarLocale || I18nUtils.getI18n("calendar", undefined, i18nMessages) || {});
                     props.onSubmit(data);
                 }
             }
@@ -128,24 +131,24 @@ export const Form: React.FC<FormProps> = (props: FormProps) => {
      */
     const notifyErrors = (errors: Array<ErrorObject>): void => {
         if (errors) {
-            const fieldsMessages = this.state.formMessages && this.state.formMessages.fields;
-            const genericValidationMessages = this.i18n("form.validation");
-            const fields: { [key: string]: FormElement } = this.extractFields();
+            const fieldsMessages = props.formMessages && props.formMessages.fields;
+            const genericValidationMessages = I18nUtils.getI18n("form.validation", undefined, i18nMessages);
+            const fields: { [key: string]: FormElement } = extractFields();
 
             const notificationsError: Notifications = getErrors(errors, fields, fieldsMessages, genericValidationMessages);
 
             /* Post-traitement des notifications concernant les champs d'autocomplétion */
-            this.processAutocompleteErrors(fields, notificationsError);
+            // TODO processAutocompleteErrors(fields, notificationsError);
 
             /* Met à jour les erreurs affichées par chaque composant champ */
             Object.keys(fields).forEach((key: string) => {
                 const field: FormElement = fields[key];
 
-                let errors = this.state.errors.filter((error: INotificationType): boolean => {
-                    return (error.field === this.state.name || error.field === this.state.name + "." + this.state.labelKey
+                let errors = notificationsError.getNotifications().filter((error: INotificationType): boolean => {
+                    return (error.field === field.name
                         || (error.additionalInfos
                             && error.additionalInfos.linkedFieldsName
-                            && error.additionalInfos.linkedFieldsName.indexOf(this.state.name) > -1)
+                            && error.additionalInfos.linkedFieldsName.indexOf(field.name) > -1)
                     );
                 });
 
@@ -170,7 +173,7 @@ export const Form: React.FC<FormProps> = (props: FormProps) => {
      * Supprime les nofifications d'erreurs et les erreurs associées à chaque champ de ce formulaire
      */
     const cleanFormErrors = (): void => {
-        const fields: { [key: string]: FormElement } = this.extractFields();
+        const fields: { [key: string]: FormElement } = extractFields();
         for (const fieldName in fields) {
             const field: FormElement = fields[fieldName];
 
@@ -198,7 +201,7 @@ export const Form: React.FC<FormProps> = (props: FormProps) => {
         "form-content-sticky": props.sticky
     }
 
-    if (this.isMultiPartForm(this.state.children)) {
+    if (isMultiPartForm(props.children)) {
         formProps["encType"] = "multipart/form-data";
     }
 
@@ -210,13 +213,13 @@ export const Form: React.FC<FormProps> = (props: FormProps) => {
         <section id="form-content" className={classNames(formClass)}>
             <form {...formProps}>
                 {(props.subTitle || props.text
-                    || (markRequired && !this.state.isMandatoryFieldsHidden)) ?
+                    || (markRequired && !props.isMandatoryFieldsHidden)) ?
                     <div className="form-titles">
                         {props.subTitle ? <h3 className="form-soustitre">{props.subTitle}</h3> : null}
                         {props.text ?
                             <p className="form-texte" {...textHtmlProps}>{props.text}</p> : null}
                         {markRequired ?
-                            <p className="discret">{I18nUtils.getI18n("form.fillField")}</p> : null}
+                            <p className="discret">{I18nUtils.getI18n("form.fillField", undefined, i18nMessages)}</p> : null}
                     </div>
                     : null}
                 {(props.children) ?
@@ -379,6 +382,7 @@ function debounced(func, delay) {
            message = specificMessage;
            if (complement) {
                complement[ "field" ] = fieldName;
+               console.log("1");
                const intlMsg = new IntlMessageFormat(specificMessage);
                message = intlMsg.format(complement);
            }
@@ -389,11 +393,38 @@ function debounced(func, delay) {
                fieldName = field.state.label;
            }
            if (isString(genericMessage)) {
+            console.log("2");
                const intlMsg = new IntlMessageFormat(genericMessage);
                message = intlMsg.format({ field: fieldName });
            }
        }
        return message;
    }
+
+   /**
+     * Méthode permettant de déterminer si le formulaire dispose d'un champ de type UploadFileField
+     * Dans ce cas, on ajoute la propriété ["encType"] = "multipart/form-data" au formulaire
+     * @param items
+     * @returns {boolean}
+     */
+    function isMultiPartForm(items: Array<React.ReactChild>): boolean {
+
+        let isMultiPart: boolean = false;
+
+        React.Children.map(items, (child: React.ReactChild) => {
+            if (!isMultiPart) {
+                if (child != null) {
+                    if (child["props"] && child["props"].children) {
+                        isMultiPart = isMultiPartForm(child["props"].children);
+                    }
+                    if (!isMultiPart && child.type === "file") {
+                        isMultiPart = true;
+                    }
+                }
+            }
+        });
+
+        return isMultiPart;
+    }
 
    

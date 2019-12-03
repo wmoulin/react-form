@@ -39,17 +39,16 @@ module.exports = (project, conf, helper, webpackConfigPart, configuration, webpa
     }
     return {
         ...configuration,
-        entry: {
-            client: [
-                "webpack-dev-server/client?http://localhost:9000",
-                "webpack/hot/only-dev-server",
-                "./app.js",
-            ]
+        entry: "app.js",
+        output: {
+            path: path.join(project.dir, "static"),
+            publicPath: "",
+            filename: conf.js + "/[name].js"
         },
         plugins: [
             ...configuration.plugins,
             ...projectPlugins,
-            new HtmlWebpackPlugin( {template: "./src/index.html", filename: "./index.html"}),
+            new HtmlWebpackPlugin( {template: "./static/index.html", filename: "index.html"}),
             new webpack.HotModuleReplacementPlugin()
         ],
         externals : (context, request, callback) => {
@@ -79,12 +78,19 @@ module.exports = (project, conf, helper, webpackConfigPart, configuration, webpa
         watchOptions: {
             aggregateTimeout: 3000
         },
+        mode: "development",
+        devtool: 'inline-source-map',
         devServer: {
-            contentBase: path.join(__dirname, 'static'),
+            contentBase: path.join(project.dir, "static"),
+            publicPath: '/',
             compress: true,
             port: 9000,
             hot: true,
-            watchContentBase: true
+            watchContentBase: true,
+            stats: {
+                children: false, // Hide children information
+                maxModules: 0 // Set the maximum number of modules to be shown
+            },
         }
     }
 

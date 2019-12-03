@@ -1,5 +1,5 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { Form } from "src/index";
 
 function App() {
@@ -8,7 +8,9 @@ function App() {
       <header className="App-header">
       </header>
       <body>
-        <Form></Form>
+        <Form>
+          <input type="text" name="input"></input><button type="submit">submit</button>
+        </Form>
       </body>
     </div>
   );

@@ -52,5 +52,4 @@ class NotificationType {
     }
 }
 exports.NotificationType = NotificationType;
-
 //# sourceMappingURL=notification.js.map

@@ -114,5 +114,4 @@ function fireEvent(event, eventOptions = {}) {
     }
 }
 exports.fireEvent = fireEvent;
-
 //# sourceMappingURL=event-manager.js.map
