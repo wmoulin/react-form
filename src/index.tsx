@@ -1,4 +1,5 @@
 import * as classNames from "classnames";
+import * as ajv from "ajv";
 import "src/sass/form.scss";
 import * as React from 'react';
 import { I18nUtils } from "hornet-js-utils/src/i18n-utils";
@@ -14,7 +15,7 @@ import IntlMessageFormat from "intl-messageformat";
 import isEmpty = require("lodash.isempty");
 import isString = require("lodash.isstring");
 const messages = require("src/ressources/messages.json");
-
+const i18nMessages = Utils.getCls("hornet.internationalization") || messages;
 
 const logger = console;
 
@@ -29,7 +30,7 @@ type FormElement = React.Element | React.HtmlElement;
 export const Form: React.FC<FormProps> = (props: FormProps) => {
     const [markRequired, setMarkRequired] = React.useState(props.markRequired || false);
     const fromElt = React.useRef(null);
-    const i18nMessages = Utils.getCls("hornet.internationalization") || messages;
+    
 
     logger.debug("Form render : ", props.id);
 
@@ -39,6 +40,7 @@ export const Form: React.FC<FormProps> = (props: FormProps) => {
      *
      */
     const validateAndSubmit = () => {
+         
         if (fromElt) {
             logger.trace("Validation et envoi du formulaire");
 
@@ -59,6 +61,21 @@ export const Form: React.FC<FormProps> = (props: FormProps) => {
         }
     }
 
+        /**
+     * Retourne le résultat de la validation et ses éventuelles erreurs
+     * @param schema : schéma de validation, par défaut celui du formulaire
+     * @param data: data extraites du formulaire à valider
+     */
+    const getValidationResult = (schema = DataValidator.transformRequiredStrings(props.schema), dataTovalidate?: any) : IValidationResult => {
+        const data = dataTovalidate || extractData(props.omitNull);
+        if (props.onBeforeSubmit) {
+            props.onBeforeSubmit(data);
+        }
+        const options: ajv.Options = props.validationOptions;
+        transformDatesToISO(schema, data, props.calendarLocale || I18nUtils.getI18n("calendar", undefined, i18nMessages) || {});
+        return new DataValidator(schema, props.customValidators, options).validate(data);
+    }
+
   /**
      * Extrait les données du formulaire
      * @param removeEmptyStrings indique si les champs ayant pour valeur une chaîne de caractères vide ne doivent pas
@@ -69,7 +86,7 @@ export const Form: React.FC<FormProps> = (props: FormProps) => {
         const data: Object = {};
         const fields: { [key: string]: FormElement } = extractFields();
         for (const name in fields) {
-            const value: any = fields[name].getCurrentValue(removeEmptyStrings);
+            const value: any = fields[name].value;
             if ((value !== "" && value !== null && !(fields[name].getType() === "number" && isNaN(value))) || !removeEmptyStrings) {
                 set(data, name, value);
             } else {
@@ -248,6 +265,7 @@ export default Form;
 function debounced(func, delay) {
     let timerId;
     return function (...args) {
+        args[0].preventDefault();
       if (timerId) {
         clearTimeout(timerId);
       }
@@ -382,8 +400,7 @@ function debounced(func, delay) {
            message = specificMessage;
            if (complement) {
                complement[ "field" ] = fieldName;
-               console.log("1");
-               const intlMsg = new IntlMessageFormat(specificMessage);
+               const intlMsg = new IntlMessageFormat(specificMessage, i18nMessages.locale);
                message = intlMsg.format(complement);
            }
 
@@ -394,7 +411,7 @@ function debounced(func, delay) {
            }
            if (isString(genericMessage)) {
             console.log("2");
-               const intlMsg = new IntlMessageFormat(genericMessage);
+               const intlMsg = new IntlMessageFormat(genericMessage, i18nMessages.locale);
                message = intlMsg.format({ field: fieldName });
            }
        }
