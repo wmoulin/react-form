@@ -9,7 +9,8 @@ function App() {
       </header>
       <body>
         <Form>
-          <input type="text" name="input"></input><button type="submit">submit</button>
+          <input type="text" name="input"></input>
+          <input type="checkbox" name="checkbox"></input><button type="submit">submit</button>
         </Form>
       </body>
     </div>
