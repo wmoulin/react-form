@@ -87,7 +87,7 @@ export const Form: React.FC<FormProps> = (props: FormProps) => {
         const fields: { [key: string]: FormElement } = extractFields();
         for (const name in fields) {
             const value: any = fields[name].value;
-            if ((value !== "" && value !== null && !(fields[name].getType() === "number" && isNaN(value))) || !removeEmptyStrings) {
+            if ((value !== "" && value !== null && !(fields[name].type === "number" && isNaN(value))) || !removeEmptyStrings) {
                 set(data, name, value);
             } else {
                 /* Le champ est vide : si son nom correspond à une arborescence d'objets, on s'assure tout de même
@@ -170,13 +170,28 @@ export const Form: React.FC<FormProps> = (props: FormProps) => {
                 });
 
                 if (errors && errors.length > 0) {
-                    field.classList.remove("error");
+                    field.parentElement && field.parentElement.classList.add("parent-field-error");
+                    field.classList.add("field-error");
                     field.setAttribute ("aria-invalid", "true");
-                    field.setAttribute("data-error-msg", errors.map((item) => item.text).join(",")); 
+                    //field.setAttribute("data-error-msg", errors.map((item) => item.text).join(","));
+                    if(!field.nextSibling ||  !field.nextSibling.classList.contains("container-field-error")) {
+                        let errorField = document.createElement("div");
+                        errorField.innerText =  errors.map((item) => item.text).join(",");
+                        errorField.classList.add("container-field-error");
+                        field.parentElement.insertBefore(errorField, field.nextSibling);
+                    } else {
+                        field.nextSibling.classList.replace( "container-field-error-hidden", "container-field-error-show" )
+                        field.nextSibling.innerText =  errors.map((item) => item.text).join(",");
+                    }
                 } else {
-                    field.classList.remove("error");
+                    field.parentElement && field.parentElement.classList.remove("parent-field-error");
+                    field.classList.remove("field-error");
                     field.setAttribute("aria-invalid", "false");
-                    field.setAttribute("data-error-msg", ""); 
+                    //field.setAttribute("data-error-msg", "");
+                    if(field.nextSibling &&  field.nextSibling.classList.contains("container-field-error")) {
+                        field.nextSibling.classList.replace( "container-field-error-show", "container-field-error-hidden" );
+                        field.nextSibling.innerText =  "";
+                    }
                 }
             });
 
@@ -195,7 +210,12 @@ export const Form: React.FC<FormProps> = (props: FormProps) => {
             const field: FormElement = fields[fieldName];
 
             // basic html
-            field.classList.remove("error");
+            field.classList.remove("field-error");
+            field.parentElement && field.parentElement.classList.remove("parent-field-error");
+            if(field.nextSibling &&  field.nextSibling.classList.contains("container-field-error")) {
+                field.nextSibling.classList.replace( "container-field-error-show", "container-field-error-hidden" );
+                field.nextSibling.innerText =  "";
+            }
         }
         fireEvent(CLEAN_NOTIFICATION_EVENT.withData({ notifyId: props.notifId, idComponent: props.id }));
     }
@@ -397,23 +417,29 @@ function debounced(func, delay) {
 
        if (isString(specificMessage)) {
 
-           message = specificMessage;
-           if (complement) {
-               complement[ "field" ] = fieldName;
-               const intlMsg = new IntlMessageFormat(specificMessage, i18nMessages.locale);
-               message = intlMsg.format(complement);
-           }
+            message = specificMessage;
+            if (complement) {
+                complement[ "field" ] = fieldName;
+                const intlMsg = new IntlMessageFormat(specificMessage, i18nMessages.locale);
+                message = intlMsg.format(complement);
+            }
 
        } else if (genericValidationMessages) {
-           const genericMessage: any = genericValidationMessages[ keyword ] || genericValidationMessages[ "generic" ];
-           if (field && isString(field.state.label) && !isEmpty(field.state.label)) { // on récupére le label associé
-               fieldName = field.state.label;
-           }
-           if (isString(genericMessage)) {
-            console.log("2");
-               const intlMsg = new IntlMessageFormat(genericMessage, i18nMessages.locale);
-               message = intlMsg.format({ field: fieldName });
-           }
+            const genericMessage: any = genericValidationMessages[ keyword ] || genericValidationMessages[ "generic" ];
+           
+            if(field && field.id){
+                var labels:HTMLCollection = document.getElementsByTagName('LABEL');
+                for (var i = 0; i < labels.length; i++) {
+                    if ((labels[i] as HTMLLabelElement).htmlFor != '' && (labels[i] as HTMLLabelElement).htmlFor == field.id) {
+                        fieldName = (labels[i] as HTMLLabelElement).innerText;         
+                    }
+                }
+            }
+
+            if (isString(genericMessage)) {
+                const intlMsg = new IntlMessageFormat(genericMessage, i18nMessages.locale);
+                message = intlMsg.format({ field: fieldName });
+            }
        }
        return message;
    }

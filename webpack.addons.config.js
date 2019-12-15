@@ -39,7 +39,7 @@ module.exports = (project, conf, helper, webpackConfigPart, configuration, webpa
     }
     return {
         ...configuration,
-        entry: "app.js",
+        entry: "./src/app.js",
         output: {
             path: path.join(project.dir, "static"),
             publicPath: "",

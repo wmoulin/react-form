@@ -15,7 +15,7 @@
     "preserveSymlinks": true
   },
   "include": [
-    "app.tsx",
+    "src/app.tsx",
     "server.ts",
     "src/**/*.ts*",
     "test/**/*.ts*",

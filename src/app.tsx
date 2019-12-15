@@ -1,7 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Form } from "src/index";
-import * as schema from "./schema.json";
+import * as schema from "../schema.json";
+import "src/sass/test.scss";
 
 function App() {
   return (
@@ -10,7 +11,11 @@ function App() {
       </header>
       <body>
         <Form schema={schema}>
-          <input type="text" name="input"></input><button type="submit">submit</button>
+          <label htmlFor={"input-id"}>mon label</label>
+          <span>
+            <input id={"input-id"} type="text" name="input"></input>
+          </span>
+          <button type="submit">submit</button>
         </Form>
       </body>
     </div>
