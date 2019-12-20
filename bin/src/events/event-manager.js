@@ -20,11 +20,11 @@ if (typeof window !== "undefined" && typeof window.CustomEvent !== "function" &&
  * Reprend la structure de la classe Event JavaScript
  */
 class BaseEvent {
+    constructor(type, eventInitDict) { }
     initEvent(eventTypeArg, canBubbleArg, cancelableArg) { }
     preventDefault() { }
     stopImmediatePropagation() { }
     stopPropagation() { }
-    constructor(type, eventInitDict) { }
 }
 exports.BaseEvent = BaseEvent;
 class Event extends BaseEvent {

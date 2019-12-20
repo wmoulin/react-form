@@ -8,6 +8,7 @@
     "jsx": "react",
     "module": "commonjs",
     "moduleResolution": "node",
+    "outDir": "bin",
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "sourceMap": true,
@@ -15,8 +16,6 @@
     "preserveSymlinks": true
   },
   "include": [
-    "src/app.tsx",
-    "server.ts",
     "src/**/*.ts*",
     "test/**/*.ts*",
   ],

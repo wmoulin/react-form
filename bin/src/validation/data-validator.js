@@ -101,6 +101,7 @@ class DataValidator {
         return resultSchema;
     }
 }
+exports.DataValidator = DataValidator;
 /**
  * Options de validation ajv par défaut, utilisables côté client et serveur (les dates sont supposées être des
  * chaînes de caractères au format ISO 8601)
@@ -116,5 +117,4 @@ DataValidator.DEFAULT_VALIDATION_OPTIONS = {
     En mode 'full', les champs de format "email' sont validés en appliquant la RFC 5322. */
     format: "full"
 };
-exports.DataValidator = DataValidator;
 //# sourceMappingURL=data-validator.js.map

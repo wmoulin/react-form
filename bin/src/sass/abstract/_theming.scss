@@ -1,0 +1,32 @@
+/// Liste des couleurs liées à chaque thème + couleurs globales
+/// global : couleurs qui ne sont pas amenées à changer selon le thème choisi
+/// base : thème de base de l'appli
+/// theme1, theme2 ... : tous les autres thèmes
+$themes: (
+    'global': (
+        'white': rgba(255, 255, 255, 1), //#fff
+        'dark': rgba(0, 0, 0, 1), //#000
+        'redError': rgba(230, 21, 29, 1), //#e6151d
+        'redErrorlight': rgba(254, 216, 218, 1), //#fed8da
+        'orangeWarning': rgba(255, 140, 0, 1), //#ff8c00
+        'greenInfos': rgba(0, 128, 0, 1), //green
+        'blueTitles': rgba(2, 64, 86, 1), //#024056
+        'texts': rgba(35, 36, 37, 1), //#232425
+        'boxShadows': rgba(0, 0, 0, 0.2)
+    ),
+    'base': (
+        'primary': rgba(5, 121, 190, 1), //#0579be
+        'secondary': rgba(3, 71, 110, 1), //#03476e
+        'states': rgba(77, 144, 254, 1), //#4d90fe
+        'texts': rgba(0, 123, 167, 1), // #007ba7
+        'buttons': rgba(3, 71 , 110, 0.92),
+        'pictos': rgba(0, 123, 167, 1) // #007ba7
+    )
+);
+
+/// function permettant de mapper les thèmes et en choisir une valeur particulière
+/// Par défaut, le thème base est choisi et sa couleur principale
+@function theme-color($key: 'base', $variant: 'primary') {
+    $map: map-get($themes, $key);
+    @return map-get($map, $variant);
+}

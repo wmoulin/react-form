@@ -12,14 +12,13 @@ const notification_events_1 = require("src/events/notification-events");
 const event_manager_1 = require("src/events/event-manager");
 const notification_1 = require("src/events/notification");
 const intl_messageformat_1 = require("intl-messageformat");
-const isEmpty = require("lodash.isempty");
 const isString = require("lodash.isstring");
 const messages = require("src/ressources/messages.json");
+const i18nMessages = hornet_js_utils_1.Utils.getCls("hornet.internationalization") || messages;
 const logger = console;
 exports.Form = (props) => {
     const [markRequired, setMarkRequired] = React.useState(props.markRequired || false);
     const fromElt = React.useRef(null);
-    const i18nMessages = hornet_js_utils_1.Utils.getCls("hornet.internationalization") || messages;
     logger.debug("Form render : ", props.id);
     /**
     * Déclenche la validation du formulaire, notifie les erreurs éventuelles et exécute la fonction
@@ -45,6 +44,20 @@ exports.Form = (props) => {
         }
     };
     /**
+ * Retourne le résultat de la validation et ses éventuelles erreurs
+ * @param schema : schéma de validation, par défaut celui du formulaire
+ * @param data: data extraites du formulaire à valider
+ */
+    const getValidationResult = (schema = data_validator_1.DataValidator.transformRequiredStrings(props.schema), dataTovalidate) => {
+        const data = dataTovalidate || extractData(props.omitNull);
+        if (props.onBeforeSubmit) {
+            props.onBeforeSubmit(data);
+        }
+        const options = props.validationOptions;
+        transformDatesToISO(schema, data, props.calendarLocale || i18n_utils_1.I18nUtils.getI18n("calendar", undefined, i18nMessages) || {});
+        return new data_validator_1.DataValidator(schema, props.customValidators, options).validate(data);
+    };
+    /**
        * Extrait les données du formulaire
        * @param removeEmptyStrings indique si les champs ayant pour valeur une chaîne de caractères vide ne doivent pas
        * être présents dans l'objet résultat.
@@ -54,8 +67,8 @@ exports.Form = (props) => {
         const data = {};
         const fields = extractFields();
         for (const name in fields) {
-            const value = fields[name].getCurrentValue(removeEmptyStrings);
-            if ((value !== "" && value !== null && !(fields[name].getType() === "number" && isNaN(value))) || !removeEmptyStrings) {
+            const value = fields[name].value;
+            if ((value !== "" && value !== null && !(fields[name].type === "number" && isNaN(value))) || !removeEmptyStrings) {
                 set(data, name, value);
             }
             else {
@@ -130,14 +143,30 @@ exports.Form = (props) => {
                             && error.additionalInfos.linkedFieldsName.indexOf(field.name) > -1));
                 });
                 if (errors && errors.length > 0) {
-                    field.classList.remove("error");
+                    field.parentElement && field.parentElement.classList.add("parent-field-error");
+                    field.classList.add("field-error");
                     field.setAttribute("aria-invalid", "true");
-                    field.setAttribute("data-error-msg", errors.map((item) => item.text).join(","));
+                    //field.setAttribute("data-error-msg", errors.map((item) => item.text).join(","));
+                    if (!field.nextSibling || !field.nextSibling.classList.contains("container-field-error")) {
+                        let errorField = document.createElement("div");
+                        errorField.innerText = errors.map((item) => item.text).join(",");
+                        errorField.classList.add("container-field-error");
+                        field.parentElement.insertBefore(errorField, field.nextSibling);
+                    }
+                    else {
+                        field.nextSibling.classList.replace("container-field-error-hidden", "container-field-error-show");
+                        field.nextSibling.innerText = errors.map((item) => item.text).join(",");
+                    }
                 }
                 else {
-                    field.classList.remove("error");
+                    field.parentElement && field.parentElement.classList.remove("parent-field-error");
+                    field.classList.remove("field-error");
                     field.setAttribute("aria-invalid", "false");
-                    field.setAttribute("data-error-msg", "");
+                    //field.setAttribute("data-error-msg", "");
+                    if (field.nextSibling && field.nextSibling.classList.contains("container-field-error")) {
+                        field.nextSibling.classList.replace("container-field-error-show", "container-field-error-hidden");
+                        field.nextSibling.innerText = "";
+                    }
                 }
             });
             /* Emission des notifications */
@@ -152,7 +181,12 @@ exports.Form = (props) => {
         for (const fieldName in fields) {
             const field = fields[fieldName];
             // basic html
-            field.classList.remove("error");
+            field.classList.remove("field-error");
+            field.parentElement && field.parentElement.classList.remove("parent-field-error");
+            if (field.nextSibling && field.nextSibling.classList.contains("container-field-error")) {
+                field.nextSibling.classList.replace("container-field-error-show", "container-field-error-hidden");
+                field.nextSibling.innerText = "";
+            }
         }
         event_manager_1.fireEvent(notification_events_1.CLEAN_NOTIFICATION_EVENT.withData({ notifyId: props.notifId, idComponent: props.id }));
     };
@@ -197,6 +231,7 @@ exports.default = exports.Form;
 function debounced(func, delay) {
     let timerId;
     return function (...args) {
+        args[0].preventDefault();
         if (timerId) {
             clearTimeout(timerId);
         }
@@ -321,19 +356,22 @@ function extractMessage(keyword, fieldName, fieldsMessages, genericValidationMes
         message = specificMessage;
         if (complement) {
             complement["field"] = fieldName;
-            console.log("1");
-            const intlMsg = new intl_messageformat_1.default(specificMessage);
+            const intlMsg = new intl_messageformat_1.default(specificMessage, i18nMessages.locale);
             message = intlMsg.format(complement);
         }
     }
     else if (genericValidationMessages) {
         const genericMessage = genericValidationMessages[keyword] || genericValidationMessages["generic"];
-        if (field && isString(field.state.label) && !isEmpty(field.state.label)) { // on récupére le label associé
-            fieldName = field.state.label;
+        if (field && field.id) {
+            var labels = document.getElementsByTagName('LABEL');
+            for (var i = 0; i < labels.length; i++) {
+                if (labels[i].htmlFor != '' && labels[i].htmlFor == field.id) {
+                    fieldName = labels[i].innerText;
+                }
+            }
         }
         if (isString(genericMessage)) {
-            console.log("2");
-            const intlMsg = new intl_messageformat_1.default(genericMessage);
+            const intlMsg = new intl_messageformat_1.default(genericMessage, i18nMessages.locale);
             message = intlMsg.format({ field: fieldName });
         }
     }
@@ -361,4 +399,4 @@ function isMultiPartForm(items) {
     });
     return isMultiPart;
 }
-//# sourceMappingURL=index.js.map
+//# sourceMappingURL=index.save.js.map
