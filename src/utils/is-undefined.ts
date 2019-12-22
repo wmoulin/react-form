@@ -1,0 +1,1 @@
+export default (val: unknown): boolean => val === undefined;

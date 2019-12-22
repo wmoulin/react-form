@@ -3,7 +3,11 @@ import "src/sass/form.scss";
 import * as React from 'react';
 import { I18nUtils } from "hornet-js-utils/src/i18n-utils";
 import { Utils } from "hornet-js-utils";
-import { debounce } from "src/utils/function-utils";
+import { debounce } from "src/utils/debounce";
+import useAjvValidator from "src/composers/use-ajv-validator";
+import useExtractData from "src/composers/use-extract-data";
+import useMessageError from "src/composers/use-message-error";
+import { FormContext } from "src/contexts/form-context";
 
 const messages = require("src/ressources/messages.json");
 const i18nMessages = Utils.getCls("hornet.internationalization") || messages;
@@ -17,9 +21,13 @@ export type FormProps = {
 } | any;
 
 export const Form: React.FC<FormProps> = (props: FormProps) => {
+
     const [markRequired, setMarkRequired] = React.useState(props.markRequired || false);
     const fromElt = React.useRef(null);
-
+    const apiRef = React.useRef({form: fromElt});
+    const {extractData, extractFields} = useExtractData(fromElt);
+    const {notifyErrors, cleanFormErrors} = useMessageError(fromElt, i18nMessages, extractFields, props.notifId, props.id, props.formMessages);
+    const validateAndSubmit = useAjvValidator(props.schema, props.validationOptions, props.customValidators, props.onBeforeSubmit, props.onSubmit, props.calendarLocale, extractData, notifyErrors, cleanFormErrors);
     // TODO || I18nUtils.getI18n("calendar", undefined, i18nMessages)
     
     logger.debug("Form render : ", props.id);
@@ -33,7 +41,7 @@ export const Form: React.FC<FormProps> = (props: FormProps) => {
 
      const formProps = {...props,  // TODO filter form attributes
         method: "post",
-        onSubmit: debounce(props.onSubmit || (() => {}), 500),
+        onSubmit: debounce(validateAndSubmit || (() => {}), 300),
         ref: fromElt,
     };
 
@@ -52,6 +60,7 @@ export const Form: React.FC<FormProps> = (props: FormProps) => {
 
     return (
         <section id="form-content" className={classNames(formClass)}>
+            <FormContext.Provider value={apiRef}>
             <form {...formProps}>
                 {(props.subTitle || props.text
                     || (markRequired && !props.isMandatoryFieldsHidden)) ?
@@ -69,6 +78,7 @@ export const Form: React.FC<FormProps> = (props: FormProps) => {
                     </div>
                     : null}
             </form>
+            </FormContext.Provider>
         </section>
     );
 };

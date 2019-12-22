@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, MutableRefObject } from 'react';
 import { ErrorObject, DependenciesParams } from 'ajv';
 import { CLEAN_NOTIFICATION_EVENT, ADD_NOTIFICATION_EVENT } from "src/events/notification-events";
 import { fireEvent } from "src/events/event-manager";
@@ -8,7 +8,7 @@ import get = require("lodash.get");
 import IntlMessageFormat from "intl-messageformat";
 import { I18nUtils } from "hornet-js-utils/src/i18n-utils";
 
-export default function useMessageError(i18nMessages, extractFields, notifId, id, formMessages) {
+export default function useMessageError(fromElt:MutableRefObject<HTMLFormElement>, i18nMessages, extractFields, notifId, id, formMessages) {
     const [errors, setErrors] = useState(null);
       /**
    * Traite les erreurs de validation de formulaire : renvoie des notifications d'erreur.
@@ -127,88 +127,84 @@ export default function useMessageError(i18nMessages, extractFields, notifId, id
   return message;
 }
 
-/**
-   * Déclenche les notifications correspondant aux éventuelles erreurs de validation
-   * @param errors erreurs de validation de formulaire, éventuellement vides
-   */
-  const notifyErrors = (errors: Array<ErrorObject>): void => {
-    if (errors) {
-        const fieldsMessages = formMessages && formMessages.fields;
-        const genericValidationMessages = I18nUtils.getI18n("form.validation", undefined, i18nMessages);
-        const fields: { [key: string]: Element[] } = extractFields();
+    return {
+        /**S
+         * Déclenche les notifications correspondant aux éventuelles erreurs de validation
+         * @param errors erreurs de validation de formulaire, éventuellement vides
+         */
+        notifyErrors: (errors: Array<ErrorObject>): void => {
+            if (errors) {
+                const fieldsMessages = formMessages && formMessages.fields;
+                const genericValidationMessages = I18nUtils.getI18n("form.validation", undefined, i18nMessages);
+                const fields: { [key: string]: Element[] } = extractFields(fromElt);
 
-        const notificationsError: Notifications = getErrors(errors, fields, fieldsMessages, genericValidationMessages);
+                const notificationsError: Notifications = getErrors(errors, fields, fieldsMessages, genericValidationMessages);
 
-        /* Post-traitement des notifications concernant les champs d'autocomplétion */
-        // TODO processAutocompleteErrors(fields, notificationsError);
+                /* Post-traitement des notifications concernant les champs d'autocomplétion */
+                // TODO processAutocompleteErrors(fields, notificationsError);
 
-        /* Met à jour les erreurs affichées par chaque composant champ */
-        Object.keys(fields).forEach((key: string) => {
-            const field: HTMLEmbedElement = fields[key][0] as HTMLEmbedElement;
+                /* Met à jour les erreurs affichées par chaque composant champ */
+                Object.keys(fields).forEach((key: string) => {
+                    const field: HTMLEmbedElement = fields[key][0] as HTMLEmbedElement;
 
-            let errors = notificationsError.getNotifications().filter((error: INotificationType): boolean => {
-                return (error.field === field.name
-                    || (error.additionalInfos
-                        && error.additionalInfos.linkedFieldsName
-                        && error.additionalInfos.linkedFieldsName.indexOf(field.name) > -1)
-                );
-            });
+                    let errors = notificationsError.getNotifications().filter((error: INotificationType): boolean => {
+                        return (error.field === field.name
+                            || (error.additionalInfos
+                                && error.additionalInfos.linkedFieldsName
+                                && error.additionalInfos.linkedFieldsName.indexOf(field.name) > -1)
+                        );
+                    });
 
-            if (errors && errors.length > 0) {
-                field.parentElement && field.parentElement.classList.add("parent-field-error");
-                field.classList.add("field-error");
-                field.setAttribute ("aria-invalid", "true");
-                //field.setAttribute("data-error-msg", errors.map((item) => item.text).join(","));
-                let nextElt: HTMLElement = field.nextSibling as HTMLElement;
-                if(!nextElt ||  !(nextElt as HTMLElement).classList.contains("container-field-error")) {
-                    let errorField = document.createElement("div");
-                    errorField.innerText =  errors.map((item) => item.text).join(",");
-                    errorField.classList.add("container-field-error");
-                    field.parentElement.insertBefore(errorField, field.nextSibling);
-                } else {
-                    nextElt.classList.replace( "container-field-error-hidden", "container-field-error-show" );
-                    nextElt.innerText =  errors.map((item) => item.text).join(",");
-                }
-            } else {
-                field.parentElement && field.parentElement.classList.remove("parent-field-error");
+                    if (errors && errors.length > 0) {
+                        field.parentElement && field.parentElement.classList.add("parent-field-error");
+                        field.classList.add("field-error");
+                        field.setAttribute ("aria-invalid", "true");
+                        //field.setAttribute("data-error-msg", errors.map((item) => item.text).join(","));
+                        let nextElt: HTMLElement = field.nextSibling as HTMLElement;
+                        if(!nextElt ||  !(nextElt as HTMLElement).classList.contains("container-field-error")) {
+                            let errorField = document.createElement("div");
+                            errorField.innerText =  errors.map((item) => item.text).join(",");
+                            errorField.classList.add("container-field-error");
+                            field.parentElement.insertBefore(errorField, field.nextSibling);
+                        } else {
+                            nextElt.classList.replace( "container-field-error-hidden", "container-field-error-show" );
+                            nextElt.innerText =  errors.map((item) => item.text).join(",");
+                        }
+                    } else {
+                        field.parentElement && field.parentElement.classList.remove("parent-field-error");
+                        field.classList.remove("field-error");
+                        field.setAttribute("aria-invalid", "false");
+                        //field.setAttribute("data-error-msg", "");
+                        let nextElt: HTMLElement = field.nextSibling as HTMLElement;
+                        if(nextElt &&  nextElt.classList.contains("container-field-error")) {
+                            nextElt.classList.replace( "container-field-error-show", "container-field-error-hidden" );
+                            nextElt.innerText =  "";
+                        }
+                    }
+                });
+
+                /* Emission des notifications */
+                fireEvent(ADD_NOTIFICATION_EVENT.withData({ notifyId: notifId, idComponent: id, errors: notificationsError}));
+            }
+        },
+        /**
+         * Supprime les nofifications d'erreurs et les erreurs associées à chaque champ de ce formulaire
+         */
+        cleanFormErrors: (): void => {
+            const fields: { [key: string]: HTMLElement[] } = extractFields(fromElt);
+            for (const fieldName in fields) {
+                const field: HTMLElement = fields[fieldName][0];
+
+                // basic html
                 field.classList.remove("field-error");
-                field.setAttribute("aria-invalid", "false");
-                //field.setAttribute("data-error-msg", "");
+                field.parentElement && field.parentElement.classList.remove("parent-field-error");
                 let nextElt: HTMLElement = field.nextSibling as HTMLElement;
-                if(nextElt &&  nextElt.classList.contains("container-field-error")) {
+                if(nextElt && nextElt.classList.contains("container-field-error")) {
                     nextElt.classList.replace( "container-field-error-show", "container-field-error-hidden" );
                     nextElt.innerText =  "";
                 }
             }
-        });
-
-        /* Emission des notifications */
-        fireEvent(ADD_NOTIFICATION_EVENT.withData({ notifyId: notifId, idComponent: id, errors: notificationsError}));
-    }
-}
-
-
-
-  
-
-  
-  /**
-   * Supprime les nofifications d'erreurs et les erreurs associées à chaque champ de ce formulaire
-   */
-  const cleanFormErrors = (): void => {
-    const fields: { [key: string]: HTMLElement[] } = extractFields();
-    for (const fieldName in fields) {
-        const field: HTMLElement = fields[fieldName][0];
-
-        // basic html
-        field.classList.remove("field-error");
-        field.parentElement && field.parentElement.classList.remove("parent-field-error");
-        let nextElt: HTMLElement = field.nextSibling as HTMLElement;
-        if(nextElt && nextElt.classList.contains("container-field-error")) {
-            nextElt.classList.replace( "container-field-error-show", "container-field-error-hidden" );
-            nextElt.innerText =  "";
+            fireEvent(CLEAN_NOTIFICATION_EVENT.withData({ notifyId: notifId, idComponent: id }));
         }
     }
-    fireEvent(CLEAN_NOTIFICATION_EVENT.withData({ notifyId: notifId, idComponent: id }));
-}
 }

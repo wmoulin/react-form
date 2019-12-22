@@ -20,7 +20,7 @@ export default function useAjvValidator(schema, validationOptions: ajv.Options, 
 
         const data = extractData();
 
-        const validationRes: IValidationResult = getValidationResult(schemaAjv, data);
+        const validationRes: IValidationResult = getValidationResult(schemaAjv.current, data);
 
         if (!validationRes.valid) {
             notifyErrors(validationRes.errors);
@@ -32,7 +32,7 @@ export default function useAjvValidator(schema, validationOptions: ajv.Options, 
             }
         }
 
-    }
+    };
 
     /**
     * Retourne le résultat de la validation et ses éventuelles erreurs
@@ -84,6 +84,6 @@ export default function useAjvValidator(schema, validationOptions: ajv.Options, 
     }
 
 
-
+    return validateAndSubmit;
 
 }

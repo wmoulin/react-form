@@ -8,7 +8,7 @@ const isString = require("lodash.isstring");
 const get = require("lodash.get");
 const intl_messageformat_1 = require("intl-messageformat");
 const i18n_utils_1 = require("hornet-js-utils/src/i18n-utils");
-function useMessageError(i18nMessages, extractFields, notifId, id, formMessages) {
+function useMessageError(fromElt, i18nMessages, extractFields, notifId, id, formMessages) {
     const [errors, setErrors] = react_1.useState(null);
     /**
  * Traite les erreurs de validation de formulaire : renvoie des notifications d'erreur.
@@ -114,77 +114,79 @@ function useMessageError(i18nMessages, extractFields, notifId, id, formMessages)
         }
         return message;
     }
-    /**
-       * Déclenche les notifications correspondant aux éventuelles erreurs de validation
-       * @param errors erreurs de validation de formulaire, éventuellement vides
-       */
-    const notifyErrors = (errors) => {
-        if (errors) {
-            const fieldsMessages = formMessages && formMessages.fields;
-            const genericValidationMessages = i18n_utils_1.I18nUtils.getI18n("form.validation", undefined, i18nMessages);
-            const fields = extractFields();
-            const notificationsError = getErrors(errors, fields, fieldsMessages, genericValidationMessages);
-            /* Post-traitement des notifications concernant les champs d'autocomplétion */
-            // TODO processAutocompleteErrors(fields, notificationsError);
-            /* Met à jour les erreurs affichées par chaque composant champ */
-            Object.keys(fields).forEach((key) => {
-                const field = fields[key][0];
-                let errors = notificationsError.getNotifications().filter((error) => {
-                    return (error.field === field.name
-                        || (error.additionalInfos
-                            && error.additionalInfos.linkedFieldsName
-                            && error.additionalInfos.linkedFieldsName.indexOf(field.name) > -1));
-                });
-                if (errors && errors.length > 0) {
-                    field.parentElement && field.parentElement.classList.add("parent-field-error");
-                    field.classList.add("field-error");
-                    field.setAttribute("aria-invalid", "true");
-                    //field.setAttribute("data-error-msg", errors.map((item) => item.text).join(","));
-                    let nextElt = field.nextSibling;
-                    if (!nextElt || !nextElt.classList.contains("container-field-error")) {
-                        let errorField = document.createElement("div");
-                        errorField.innerText = errors.map((item) => item.text).join(",");
-                        errorField.classList.add("container-field-error");
-                        field.parentElement.insertBefore(errorField, field.nextSibling);
+    return {
+        /**S
+         * Déclenche les notifications correspondant aux éventuelles erreurs de validation
+         * @param errors erreurs de validation de formulaire, éventuellement vides
+         */
+        notifyErrors: (errors) => {
+            if (errors) {
+                const fieldsMessages = formMessages && formMessages.fields;
+                const genericValidationMessages = i18n_utils_1.I18nUtils.getI18n("form.validation", undefined, i18nMessages);
+                const fields = extractFields(fromElt);
+                const notificationsError = getErrors(errors, fields, fieldsMessages, genericValidationMessages);
+                /* Post-traitement des notifications concernant les champs d'autocomplétion */
+                // TODO processAutocompleteErrors(fields, notificationsError);
+                /* Met à jour les erreurs affichées par chaque composant champ */
+                Object.keys(fields).forEach((key) => {
+                    const field = fields[key][0];
+                    let errors = notificationsError.getNotifications().filter((error) => {
+                        return (error.field === field.name
+                            || (error.additionalInfos
+                                && error.additionalInfos.linkedFieldsName
+                                && error.additionalInfos.linkedFieldsName.indexOf(field.name) > -1));
+                    });
+                    if (errors && errors.length > 0) {
+                        field.parentElement && field.parentElement.classList.add("parent-field-error");
+                        field.classList.add("field-error");
+                        field.setAttribute("aria-invalid", "true");
+                        //field.setAttribute("data-error-msg", errors.map((item) => item.text).join(","));
+                        let nextElt = field.nextSibling;
+                        if (!nextElt || !nextElt.classList.contains("container-field-error")) {
+                            let errorField = document.createElement("div");
+                            errorField.innerText = errors.map((item) => item.text).join(",");
+                            errorField.classList.add("container-field-error");
+                            field.parentElement.insertBefore(errorField, field.nextSibling);
+                        }
+                        else {
+                            nextElt.classList.replace("container-field-error-hidden", "container-field-error-show");
+                            nextElt.innerText = errors.map((item) => item.text).join(",");
+                        }
                     }
                     else {
-                        nextElt.classList.replace("container-field-error-hidden", "container-field-error-show");
-                        nextElt.innerText = errors.map((item) => item.text).join(",");
+                        field.parentElement && field.parentElement.classList.remove("parent-field-error");
+                        field.classList.remove("field-error");
+                        field.setAttribute("aria-invalid", "false");
+                        //field.setAttribute("data-error-msg", "");
+                        let nextElt = field.nextSibling;
+                        if (nextElt && nextElt.classList.contains("container-field-error")) {
+                            nextElt.classList.replace("container-field-error-show", "container-field-error-hidden");
+                            nextElt.innerText = "";
+                        }
                     }
-                }
-                else {
-                    field.parentElement && field.parentElement.classList.remove("parent-field-error");
-                    field.classList.remove("field-error");
-                    field.setAttribute("aria-invalid", "false");
-                    //field.setAttribute("data-error-msg", "");
-                    let nextElt = field.nextSibling;
-                    if (nextElt && nextElt.classList.contains("container-field-error")) {
-                        nextElt.classList.replace("container-field-error-show", "container-field-error-hidden");
-                        nextElt.innerText = "";
-                    }
-                }
-            });
-            /* Emission des notifications */
-            event_manager_1.fireEvent(notification_events_1.ADD_NOTIFICATION_EVENT.withData({ notifyId: notifId, idComponent: id, errors: notificationsError }));
-        }
-    };
-    /**
-     * Supprime les nofifications d'erreurs et les erreurs associées à chaque champ de ce formulaire
-     */
-    const cleanFormErrors = () => {
-        const fields = extractFields();
-        for (const fieldName in fields) {
-            const field = fields[fieldName][0];
-            // basic html
-            field.classList.remove("field-error");
-            field.parentElement && field.parentElement.classList.remove("parent-field-error");
-            let nextElt = field.nextSibling;
-            if (nextElt && nextElt.classList.contains("container-field-error")) {
-                nextElt.classList.replace("container-field-error-show", "container-field-error-hidden");
-                nextElt.innerText = "";
+                });
+                /* Emission des notifications */
+                event_manager_1.fireEvent(notification_events_1.ADD_NOTIFICATION_EVENT.withData({ notifyId: notifId, idComponent: id, errors: notificationsError }));
             }
+        },
+        /**
+         * Supprime les nofifications d'erreurs et les erreurs associées à chaque champ de ce formulaire
+         */
+        cleanFormErrors: () => {
+            const fields = extractFields(fromElt);
+            for (const fieldName in fields) {
+                const field = fields[fieldName][0];
+                // basic html
+                field.classList.remove("field-error");
+                field.parentElement && field.parentElement.classList.remove("parent-field-error");
+                let nextElt = field.nextSibling;
+                if (nextElt && nextElt.classList.contains("container-field-error")) {
+                    nextElt.classList.replace("container-field-error-show", "container-field-error-hidden");
+                    nextElt.innerText = "";
+                }
+            }
+            event_manager_1.fireEvent(notification_events_1.CLEAN_NOTIFICATION_EVENT.withData({ notifyId: notifId, idComponent: id }));
         }
-        event_manager_1.fireEvent(notification_events_1.CLEAN_NOTIFICATION_EVENT.withData({ notifyId: notifId, idComponent: id }));
     };
 }
 exports.default = useMessageError;

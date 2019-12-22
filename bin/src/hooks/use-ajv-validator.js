@@ -14,7 +14,7 @@ function useAjvValidator(schema, validationOptions, customValidators, onBeforeSu
     const validateAndSubmit = () => {
         logger.trace("Validation et envoi du formulaire");
         const data = extractData();
-        const validationRes = getValidationResult(schemaAjv, data);
+        const validationRes = getValidationResult(schemaAjv.current, data);
         if (!validationRes.valid) {
             notifyErrors(validationRes.errors);
         }
@@ -71,6 +71,7 @@ function useAjvValidator(schema, validationOptions, customValidators, onBeforeSu
             }
         }
     }
+    return validateAndSubmit;
 }
 exports.default = useAjvValidator;
 //# sourceMappingURL=use-ajv-validator.js.map

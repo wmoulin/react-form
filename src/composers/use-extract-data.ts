@@ -1,8 +1,9 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const get = require("lodash.get");
-const set = require("lodash.set");
-function useExtractData(fromElt) {
+import get = require("lodash.get");
+import set = require("lodash.set");
+import { MutableRefObject } from 'react';
+
+export default function useExtractData(fromElt:MutableRefObject<HTMLFormElement>) {
+    
     /**
      * Extrait les données du formulaire
      * @param removeEmptyStrings indique si les champs ayant pour valeur une chaîne de caractères vide ne doivent pas
@@ -10,34 +11,34 @@ function useExtractData(fromElt) {
      * @returns {Object}
      */
     return {
-        extractData: (removeEmptyStrings = true) => {
-            const data = {};
-            const fields = extractFields(fromElt);
+        extractData: (removeEmptyStrings: boolean = true): Object => {
+            const data: Object = {};
+            const fields: { [key: string]: Element[] } = extractFields(fromElt);
             for (const name in fields) {
-                fields[name].forEach((field) => {
-                    const value = field.value;
+                fields[name].forEach((field:HTMLInputElement) => {
+                    const value: any = field.value;
                     if ((value !== "" && value !== null && !(field.type === "number" && isNaN(value))) || !removeEmptyStrings) {
                         set(data, name, value);
-                    }
-                    else {
+                    } else {
                         /* Le champ est vide : si son nom correspond à une arborescence d'objets, on s'assure tout de même
                         que l'objet parent existe */
                         const lastDotIndex = name.lastIndexOf(".");
                         if (lastDotIndex > 0) {
-                            const parentPath = name.substring(0, lastDotIndex);
+                            const parentPath: string = name.substring(0, lastDotIndex);
                             if (get(data, parentPath) == null) {
                                 set(data, parentPath, {});
                             }
                         }
                     }
-                });
+                })
             }
             // Parcourir l'objet data et remplacer la valeur des sous objets contenant que des objets vides ex :{id: "", libelle: ""} par null
             if (data && !removeEmptyStrings) {
                 Object.keys(data).forEach((key) => {
                     const currentData = data[key];
+
                     if (currentData && Object.keys(currentData) && Object.keys(currentData).length > 0) {
-                        let isObjectNotEmpty;
+                        let isObjectNotEmpty: boolean;
                         let i = 0;
                         while (i < Object.keys(currentData).length && !isObjectNotEmpty) {
                             if (currentData[Object.keys(currentData)[i]]) {
@@ -53,20 +54,21 @@ function useExtractData(fromElt) {
             }
             return data;
         },
+
         extractFields
-    };
+    }
 }
-exports.default = useExtractData;
-function extractFields(fromElt) {
-    const fields = {};
+
+function extractFields(fromElt:MutableRefObject<HTMLFormElement>): { [key: string]: Element[] } {
+    const fields: { [key: string]: Element[] } = {};
     if (fromElt.current) {
         for (let index = 0; index < fromElt.current.elements.length; index++) {
-            const item = fromElt.current.elements[index];
+
+            const item: Element = fromElt.current.elements[index];
             if (item["name"]) {
                 if (fields[item["name"]]) {
                     fields[item["name"]].push(item);
-                }
-                else {
+                } else {
                     fields[item["name"]] = [item];
                 }
             }
@@ -74,4 +76,3 @@ function extractFields(fromElt) {
     }
     return fields;
 }
-//# sourceMappingURL=use-extract-data.js.map

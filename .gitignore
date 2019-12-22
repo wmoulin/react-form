@@ -9,6 +9,7 @@ app.js
 *.js.map
 ./**/*.d.ts
 *.d.ts
+bin
 
 #vscode
 .history
