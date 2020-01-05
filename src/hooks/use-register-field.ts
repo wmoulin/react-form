@@ -7,24 +7,23 @@ const isWindowUndefined = typeof window === undefined;
 export function useFormField() {
     const formContext = useContext(FormContext);
     
-    function register<Element>(
-        fieldOptions?: FieldOptions,
-      ): (ref: Element | null) => void;
-    function register<Element>(
-        ref: Element | null,
-        fieldOptions?: FieldOptions,
-      ): ((ref: Element | null) => void) | void {
-        if (isWindowUndefined) {
-          return;
-        }
-    
-        if (!isNullOrUndefined(ref)) {
-          registerFieldsRef(ref as any, fieldOptions);
-          return;
-        }
-    
-        return (ref: Element | null) =>
-          ref && registerFieldsRef(ref as any, fieldOptions);
+    return {
+      register: function<Element>(
+          ref?: Element | null,
+          fieldOptions?: FieldOptions,
+        ): ((ref: Element | null) => void) | void {
+          if (isWindowUndefined) {
+            return;
+          }
+      
+          if (!isNullOrUndefined(ref)) {
+            registerFieldsRef(ref as any, fieldOptions);
+            return;
+          }
+      
+          return (ref: Element | null) =>
+            ref && registerFieldsRef(ref as any, fieldOptions);
+      }
     }
 
     function registerFieldsRef(

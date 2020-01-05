@@ -2,7 +2,7 @@ import get = require("lodash.get");
 import set = require("lodash.set");
 import { MutableRefObject } from 'react';
 
-export default function useExtractData(fromElt:MutableRefObject<HTMLFormElement>) {
+export default function getExtractData(fromElt:MutableRefObject<HTMLFormElement>) {
     
     /**
      * Extrait les données du formulaire

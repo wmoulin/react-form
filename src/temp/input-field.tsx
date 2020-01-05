@@ -5,11 +5,11 @@ import { string } from 'prop-types';
 export interface Props {
     id: string;
     label: string;
-    required: boolean;
-    disabled: boolean;
-    readonly: boolean;
-    value: string;
-    defaultValue: string;
+    required?: boolean;
+    disabled?: boolean;
+    readonly?: boolean;
+    value?: string;
+    defaultValue?: string;
 }
 export interface State {
     value?: string;

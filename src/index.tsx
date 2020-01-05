@@ -5,7 +5,7 @@ import { I18nUtils } from "hornet-js-utils/src/i18n-utils";
 import { Utils } from "hornet-js-utils";
 import { debounce } from "src/utils/debounce";
 import useAjvValidator from "src/composers/use-ajv-validator";
-import useExtractData from "src/composers/use-extract-data";
+import useExtractData from "src/composers/extract-data";
 import useMessageError from "src/composers/use-message-error";
 import { FormContext } from "src/contexts/form-context";
 
