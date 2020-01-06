@@ -9,6 +9,7 @@ FormContext.displayName = 'FormContext';
 
 export interface FormAPI {
     fields?: { [key: string]: FieldOptions };
+    extractData: (boolean) => Object
 }
 export type FieldOptions = Partial<{
     required: boolean | string;

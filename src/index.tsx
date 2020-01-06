@@ -1,13 +1,15 @@
 import * as classNames from "classnames";
 import "src/sass/form.scss";
 import * as React from 'react';
+import { useEffect } from 'react';
 import { I18nUtils } from "hornet-js-utils/src/i18n-utils";
 import { Utils } from "hornet-js-utils";
 import { debounce } from "src/utils/debounce";
 import useAjvValidator from "src/composers/use-ajv-validator";
-import useExtractData from "src/composers/extract-data";
+import getExtractData from "src/composers/extract-data";
 import useMessageError from "src/composers/use-message-error";
 import { FormContext } from "src/contexts/form-context";
+import useExtractData from 'src/hooks/use-extract-data';
 
 const messages = require("src/ressources/messages.json");
 const i18nMessages = Utils.getCls("hornet.internationalization") || messages;
@@ -21,11 +23,11 @@ export type FormProps = {
 } | any;
 
 export const Form: React.FC<FormProps> = (props: FormProps) => {
-
+    
     const [markRequired, setMarkRequired] = React.useState(props.markRequired || false);
     const fromElt = React.useRef(null);
     const apiRef = React.useRef({form: fromElt});
-    const {extractData, extractFields} = useExtractData(fromElt);
+    const {extractData, extractFields} = getExtractData(fromElt);
     const {notifyErrors, cleanFormErrors} = useMessageError(fromElt, i18nMessages, extractFields, props.notifId, props.id, props.formMessages);
     const validateAndSubmit = useAjvValidator(props.schema, props.validationOptions, props.customValidators, props.onBeforeSubmit, props.onSubmit, props.calendarLocale, extractData, notifyErrors, cleanFormErrors);
     // TODO || I18nUtils.getI18n("calendar", undefined, i18nMessages)
@@ -58,10 +60,14 @@ export const Form: React.FC<FormProps> = (props: FormProps) => {
         lang: props.textLang ? props.textLang : null,
     };
 
+    useEffect(() => {
+        useExtractData(fromElt.current, apiRef)
+    }, []);
     return (
         <section id="form-content" className={classNames(formClass)}>
+        {/* */}
             <FormContext.Provider value={apiRef}>
-            <form {...formProps}>
+            <form {...formProps} >
                 {(props.subTitle || props.text
                     || (markRequired && !props.isMandatoryFieldsHidden)) ?
                     <div className="form-titles">

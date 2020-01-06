@@ -1,8 +1,8 @@
 import get = require("lodash.get");
 import set = require("lodash.set");
-import { MutableRefObject } from 'react';
 import { FormContext } from "src/contexts/form-context";
-import { useContext } from 'react';
+import { useContext, useCallback } from 'react';
+import { MutableRefObject } from 'react';
 
 export type ValueField<T> = {
     getCurrentValue?(): T;
@@ -10,9 +10,9 @@ export type ValueField<T> = {
     type: string;
 }
 
-export default function useExtractData(fromElt:MutableRefObject<HTMLFormElement>) {
+export default function useExtractData(fromElt:MutableRefObject<HTMLFormElement>, formContext:any) {
     
-    const formContext = useContext(FormContext);
+    //const formContext = useContext(FormContext);
 
     /**
      * Extrait les données du formulaire
@@ -20,10 +20,10 @@ export default function useExtractData(fromElt:MutableRefObject<HTMLFormElement>
      * être présents dans l'objet résultat.
      * @returns {Object}
      */
-    return {
-        extractData: (removeEmptyStrings: boolean = true): Object => {
+
+     //return (fromElt:MutableRefObject<HTMLFormElement>) => {
+        formContext.current.extractData = (removeEmptyStrings: boolean = true): Object => {
             const data: Object = {};
-            //const fields: { [key: string]: Element[] } = extractFields(fromElt);
 
             Object.keys(formContext.current.fields).forEach((name) => {
                 let field = formContext.current.fields[name].ref as any as ValueField<any>;
@@ -65,5 +65,5 @@ export default function useExtractData(fromElt:MutableRefObject<HTMLFormElement>
             }
             return data;
         }
-    }
+    //}
 }
