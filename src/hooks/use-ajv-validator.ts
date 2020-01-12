@@ -1,23 +1,25 @@
+import { useRef, useContext } from 'react';
+import { FormContext } from "src/contexts/form-context";
 import * as ajv from "ajv";
 import { Utils } from "hornet-js-utils";
 import { DataValidator, IValidationResult, ICustomValidation } from 'src/validation/data-validator';
 
 const logger = console;
 
-export default function useAjvValidator(schema, validationOptions: ajv.Options, customValidators: ICustomValidation[], onBeforeSubmit, onSubmit, calendarLocale, extractData, notifyErrors, cleanFormErrors) {
+export default function useAjvValidator(schema, validationOptions: ajv.Options, customValidators: ICustomValidation[], onBeforeSubmit, onSubmit, calendarLocale, notifyErrors, cleanFormErrors, formContext:any = useContext(FormContext)) {
 
-    const schemaAjv = DataValidator.transformRequiredStrings(schema);
-
+    const schemaAjv = useRef(DataValidator.transformRequiredStrings(schema));
+    
     /**
     * Déclenche la validation du formulaire, notifie les erreurs éventuelles et exécute la fonction
     * onSubmit présente dans les propriétés s'il n'y a pas d'erreurs
     *
     */
-    const validateAndSubmit = () => {
+    formContext.current.validateAndSubmit = () => {
 
         logger.trace("Validation et envoi du formulaire");
 
-        const data = extractData();
+        const data = formContext.current.extractData();
 
         const validationRes: IValidationResult = getValidationResult(schemaAjv.current, data);
 
@@ -33,13 +35,13 @@ export default function useAjvValidator(schema, validationOptions: ajv.Options, 
 
     };
 
-    /**
+    /**onBeforeSubmit
     * Retourne le résultat de la validation et ses éventuelles erreurs
     * @param schema : schéma de validation, par défaut celui du formulaire
     * @param data: data extraites du formulaire à valider
     */
     const getValidationResult = (schema = schemaAjv, dataTovalidate?: any): IValidationResult => {
-        const data = dataTovalidate || extractData();
+        const data = dataTovalidate || formContext.current.extractData();
         if (onBeforeSubmit) {
             onBeforeSubmit(data);
         }
@@ -81,8 +83,5 @@ export default function useAjvValidator(schema, validationOptions: ajv.Options, 
             }
         }
     }
-
-
-    return validateAndSubmit;
 
 }

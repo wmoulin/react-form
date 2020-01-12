@@ -1,10 +1,10 @@
 import * as React from "react"
-import { AppSharedProps } from 'hornet-js-utils/src/app-shared-props';
-import { string } from 'prop-types';
+import { FormContext } from 'src/contexts/form-context';
 
 export interface Props {
     id: string;
     label: string;
+    name?: string;
     required?: boolean;
     disabled?: boolean;
     readonly?: boolean;
@@ -18,6 +18,8 @@ export interface State {
 }
 
 export class InputField extends React.Component<Props, State> {
+
+    //static contextType = FormContext;
 
     constructor(props:Props, context:any) {
         super(props, context);

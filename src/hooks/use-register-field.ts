@@ -23,6 +23,22 @@ export function useFormField() {
       
           return (ref: Element | null) =>
             ref && registerFieldsRef(ref as any, fieldOptions);
+      },
+      unregister: function<Element>(
+        ref?: Element | null,
+        fieldOptions?: FieldOptions,
+      ): ((ref: Element | null) => void) | void {
+        if (isWindowUndefined) {
+          return;
+        }
+    
+        if (!isNullOrUndefined(ref)) {
+          unregisterFieldsRef(ref as any, fieldOptions);
+          return;
+        }
+    
+        return (ref: Element | null) =>
+          ref && unregisterFieldsRef(ref as any, fieldOptions);
       }
     }
 
@@ -30,20 +46,43 @@ export function useFormField() {
         ref: ValueElement,
         fieldOptions: FieldOptions = {},
       ): void {
-        if (!ref.name) {
+        let name = "";
+        if (ref.name) {
+          name = ref.name;
+        } else if (fieldOptions.name) {
+          name = fieldOptions.name;
+        } else {
           return console.warn('Missing name @', ref);
         }
     
-        const { name, type, value } = ref;
+        const { type, value } = ref;
         const fieldAttributes = {
           ref,
           ...fieldOptions,
         };
-        
+        if(!formContext.current.fields) formContext.current.fields = {};
         formContext.current.fields[name] = fieldAttributes;
     
     
-      }
+    }
+    function unregisterFieldsRef(
+        ref: ValueElement,
+        fieldOptions: FieldOptions = {},
+      ): void {
+        let name = "";
+        if (ref.name) {
+          name = ref.name;
+        } else if (fieldOptions.name) {
+          name = fieldOptions.name;
+        } else {
+          return console.warn('Missing name @', ref);
+        }
+        if(!formContext.current.fields[name]) {
+          return console.warn('Missing field in FormContext with name', name);
+        }
+        delete formContext.current.fields[name];
+    
+    }
 }
 
   export interface ValueElement extends Element {

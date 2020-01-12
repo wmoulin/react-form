@@ -3,11 +3,15 @@ import * as ReactDOM from 'react-dom';
 import { Form } from "src/index";
 import * as schema from "../schema.json";
 import "src/sass/test.scss";
-import { InputField } from './temp/input-field.js';
-import { useFormField } from './hooks/use-register-field.js';
+import { InputField } from 'src/temp/input-field';
+import { useFormField } from 'src/hooks/use-form-field';
+import { RegisterField } from 'src/hoc/register-field-fc';
 
 function App() {
   const { register } = useFormField();
+  const InputFieldRegisterField = RegisterField(InputField, {id: "test-input", label:"input component", disabled: false});
+  const InputField1RegisterField = RegisterField(InputField, {id: "test-input1", label:"input component", disabled: false, name: "InputField1"});
+
   return (
     <div className="App">
       <header className="App-header">
@@ -19,7 +23,10 @@ function App() {
             <input id={"input-id"} type="text" name="input"></input>
           </span>
           <span>
-            <InputField id={"test-input"} label={"input component"} disabled={false} ref={register}/>
+            <InputFieldRegisterField/>
+          </span>
+          <span>
+            <InputField1RegisterField/>
           </span>
           <button type="submit">submit</button>
         </Form>

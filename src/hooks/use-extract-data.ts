@@ -10,10 +10,8 @@ export type ValueField<T> = {
     type: string;
 }
 
-export default function useExtractData(fromElt:MutableRefObject<HTMLFormElement>, formContext:any) {
+export default function useExtractData(fromElt:MutableRefObject<HTMLFormElement>, formContext:any=useContext(FormContext)) {
     
-    //const formContext = useContext(FormContext);
-
     /**
      * Extrait les données du formulaire
      * @param removeEmptyStrings indique si les champs ayant pour valeur une chaîne de caractères vide ne doivent pas
@@ -64,6 +62,24 @@ export default function useExtractData(fromElt:MutableRefObject<HTMLFormElement>
                 });
             }
             return data;
+        }
+
+        formContext.current.extractFields = (fromElt:MutableRefObject<HTMLFormElement> = formContext.current.form): { [key: string]: Element[] } => {
+            const fields: { [key: string]: Element[] } = {};
+            if (fromElt.current) {
+                for (let index = 0; index < fromElt.current.elements.length; index++) {
+        
+                    const item: Element = fromElt.current.elements[index];
+                    if (item["name"]) {
+                        if (fields[item["name"]]) {
+                            fields[item["name"]].push(item);
+                        } else {
+                            fields[item["name"]] = [item];
+                        }
+                    }
+                }
+            }
+            return fields;
         }
     //}
 }
