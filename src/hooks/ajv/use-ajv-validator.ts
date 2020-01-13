@@ -6,7 +6,7 @@ import { DataValidator, IValidationResult, ICustomValidation } from 'src/validat
 
 const logger = console;
 
-export default function useAjvValidator(schema, validationOptions: ajv.Options, customValidators: ICustomValidation[], onBeforeSubmit, onSubmit, calendarLocale, notifyErrors, cleanFormErrors, formContext:any = useContext(FormContext)) {
+export default function useAjvValidator(schema, validationOptions: ajv.Options, customValidators: ICustomValidation[],  onBeforeSubmit, onSubmit, calendarLocale, formContext:any = useContext(FormContext)) {
 
     const schemaAjv = useRef(DataValidator.transformRequiredStrings(schema));
     
@@ -24,9 +24,9 @@ export default function useAjvValidator(schema, validationOptions: ajv.Options, 
         const validationRes: IValidationResult = getValidationResult(schemaAjv.current, data);
 
         if (!validationRes.valid) {
-            notifyErrors(validationRes.errors);
+            formContext.current.notifyErrors(validationRes.errors);
         } else {
-            cleanFormErrors();
+            formContext.current.cleanFormErrors();
             if (onSubmit) {
                 transformDatesToISO(schemaAjv, data, calendarLocale || {});
                 onSubmit(data);
@@ -34,6 +34,7 @@ export default function useAjvValidator(schema, validationOptions: ajv.Options, 
         }
 
     };
+
 
     /**onBeforeSubmit
     * Retourne le résultat de la validation et ses éventuelles erreurs
@@ -83,5 +84,4 @@ export default function useAjvValidator(schema, validationOptions: ajv.Options, 
             }
         }
     }
-
 }

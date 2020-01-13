@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useRef } from 'react';
 import { ICustomValidation } from 'src/validation/data-validator';
+import { ErrorObject } from 'ajv';
 
 type FormElement = Element | HTMLElement;
 
@@ -13,6 +14,8 @@ export interface FormAPI {
     extractData: (boolean?) => Object;
     validateAndSubmit: () => void;
     extractFields(fromElt?:React.MutableRefObject<HTMLFormElement>): { [key: string]: Element[] };
+    cleanFormErrors(): void;
+    notifyErrors(errors: Array<any>): void;
 }
 export type FieldOptions = Partial<{
     required: boolean | string;
