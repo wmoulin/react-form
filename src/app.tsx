@@ -1,11 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Form } from "src/index";
-import * as schema from "../schema.json";
+import * as schema from "./schema.json";
 import "src/sass/test.scss";
 import { InputField } from 'src/temp/input-field';
 import { useFormField } from 'src/hooks/use-form-field';
-import { RegisterField } from 'src/hoc/register-field-fc';
+import { RegisterField } from 'src/hoc/register-field';
 
 function App() {
   const { register } = useFormField();
