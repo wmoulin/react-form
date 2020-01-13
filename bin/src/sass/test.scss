@@ -1,8 +1,0 @@
-@import 'core';
-
-
-span.field-error::after {
-  content: attr(data-error-msg);
-  color: $globalErrorColor;
-  font-style: italic;
-}

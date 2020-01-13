@@ -1,16 +1,13 @@
 import * as classNames from "classnames";
 import "src/sass/form.scss";
 import * as React from 'react';
-import { useEffect } from 'react';
 import { I18nUtils } from "hornet-js-utils/src/i18n-utils";
 import { Utils } from "hornet-js-utils";
 import { debounce } from "src/utils/debounce";
-//import useAjvValidator from "src/composers/use-ajv-validator";
-import getExtractData from "src/composers/extract-data";
-import useMessageError from "src/composers/use-message-error";
 import { FormContext, FormAPI } from "src/contexts/form-context";
 import useExtractData from 'src/hooks/use-extract-data';
-import useAjvValidator from 'src/hooks/use-ajv-validator';
+import useAjvValidator from 'src/hooks/ajv/use-ajv-validator';
+import useNotifyAjvError from 'src/hooks/ajv/use-notify-ajv-error';
 
 const messages = require("src/ressources/messages.json");
 const i18nMessages = Utils.getCls("hornet.internationalization") || messages;
@@ -28,9 +25,10 @@ export const Form: React.FC<FormProps> = (props: FormProps) => {
     const [markRequired, setMarkRequired] = React.useState(props.markRequired || false);
     const fromElt = React.useRef(null);
     const apiRef = React.useRef({} as FormAPI);
-    const {extractData, extractFields} = getExtractData(fromElt);
-    const {notifyErrors, cleanFormErrors} = useMessageError(fromElt, i18nMessages, extractFields, props.notifId, props.id, props.formMessages);
-    useAjvValidator(props.schema, props.validationOptions, props.customValidators, props.onBeforeSubmit, props.onSubmit, props.calendarLocale, notifyErrors, cleanFormErrors, apiRef);
+    //const {extractData, extractFields} = getExtractData(fromElt);
+    //const {notifyErrors, cleanFormErrors} = useMessageError(fromElt, i18nMessages, extractFields, props.notifId, props.id, props.formMessages);
+    useAjvValidator(props.schema, props.validationOptions, props.customValidators, props.onBeforeSubmit, props.onSubmit, props.calendarLocale, apiRef);
+    useNotifyAjvError(props.notifId, props.id, props.formMessages, apiRef);
 
     //const validateAndSubmit = useAjvValidator(props.schema, props.validationOptions, props.customValidators, props.onBeforeSubmit, props.onSubmit, props.calendarLocale, extractData, notifyErrors, cleanFormErrors);
     // TODO || I18nUtils.getI18n("calendar", undefined, i18nMessages)
@@ -62,7 +60,7 @@ export const Form: React.FC<FormProps> = (props: FormProps) => {
         lang: props.textLang ? props.textLang : null,
     };
 
-    useExtractData(fromElt.current, apiRef);
+    useExtractData(apiRef);
     
     return (
         <section id="form-content" className={classNames(formClass)}>
@@ -77,7 +75,7 @@ export const Form: React.FC<FormProps> = (props: FormProps) => {
                             {markRequired ?
                                 <p className="discret">{I18nUtils.getI18n("form.fillField", undefined, i18nMessages)}</p> : null}
                         </div>
-                        : null}
+                        : null}i18nMessages
                     {(props.children) ?
                         <div className="form-content">
                             {props.children}
