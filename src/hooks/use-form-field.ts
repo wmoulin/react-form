@@ -11,7 +11,7 @@ export function useFormField(/*name, validators, ref*/) {
     //const fieldsRef = useRef< { [key: string]: FieldOptions }>({});
 
     //function register(fieldOptions: FieldOptions | Element | null): ((ref: Element | null) => void) | void;
-    function register(ref?: Element | null, fieldOptions?: FieldOptions): ((ref: Element | null) => void) | void {
+    function register(ref?: Element | null, fieldOptions?: FieldOptions<any>): ((ref: Element | null) => void) | void {
         if (isWindowUndefined) {
           return;
         }
@@ -28,7 +28,7 @@ export function useFormField(/*name, validators, ref*/) {
 
   function registerFieldsRef(
       ref: ValueElement,
-      fieldOptions: FieldOptions = {},
+      fieldOptions: FieldOptions<any> = {},
     ): void {
       let name = ref.name || ref.props.name || fieldOptions.name;
       if (!name) {
@@ -48,7 +48,7 @@ export function useFormField(/*name, validators, ref*/) {
 
     function unregister(
         ref?: Element | null,
-        fieldOptions?: FieldOptions,
+        fieldOptions?: FieldOptions<any>,
       ): ((ref: Element | null) => void) | void {
         if (isWindowUndefined) {
           return;
@@ -65,7 +65,7 @@ export function useFormField(/*name, validators, ref*/) {
 
     function unregisterFieldsRef(
         ref: ValueElement,
-        fieldOptions: FieldOptions = {},
+        fieldOptions: FieldOptions<any> = {},
       ): void {
         let name = "";
         if (ref.name) {

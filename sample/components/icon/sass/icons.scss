@@ -1,0 +1,32 @@
+@import '../../../../src/sass/core';
+
+$iconStatesOutline: theme-color($variant: 'states');
+
+.button-action,
+.larger-screen
+ {
+    outline: 0px solid $iconStatesOutline; 
+    
+    &:hover,
+    &:focus {
+        @include smoothTransition(outline, 0.3s);
+        outline: 1px solid $iconStatesOutline;    
+    }
+}
+
+.svg-container {
+    display: flex;
+    vertical-align: middle;
+    align-items: center;
+    margin: 0 auto;
+}
+
+.svg-content {
+    margin: 0 auto
+}
+
+.button-action.picto-svg {
+    svg {
+        vertical-align: middle;
+    }
+}

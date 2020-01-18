@@ -1,0 +1,194 @@
+@import '../../../../src/sass/core';
+
+$tabsBaseColor: theme-color('global', 'white');
+$tabsPrimaryColor: theme-color($variant: 'secondary');
+$tabsLabelBg: rgba(234, 234, 234, 1); //#eaeaea
+$tabsLabelDisabled: rgba(248, 248, 255, 1); //#f8f8ff
+$tableHeaderColor: theme-color($variant: 'primary');
+$tabsArrowBorder: theme-color('global', 'blueTitles');
+$tabsArrowDisabled: rgba(211, 211, 211, 1); //#d3d3d3
+
+.tabview {
+    margin-top: 0.438em;
+
+    .tabviewHeaderContent {
+        border-bottom: 2px solid $tabsPrimaryColor;
+
+        .tabviewHeader {
+            display: inline;
+
+            .tabviewContentList {
+                overflow: hidden;
+                display: flex;
+                width: calc(100% - 1.9em);
+
+                &.touch {
+                    overflow: auto;
+                    width: 100%;
+                }
+
+                button.tabs-add-button {
+                    display: inline-block;
+                    min-width: 3em;
+                    margin: 0 0.05em;
+                    color: $tabsPrimaryColor;
+                    border-radius: 0.4em 0.4em 0 0;
+                    border: none;
+                    background: url("../img/add.svg") no-repeat center $tabsLabelBg;
+                    cursor: pointer;
+
+                    &:hover,
+                    &:focus {
+                        outline-color: -webkit-focus-ring-color;
+                        outline-style: auto;
+                        outline-width: 1px;
+                    }
+
+                    .tabs-button-label {
+                        display: none;
+                    }
+                }
+
+                .tabview-list {
+                    display: inline-flex;
+                    list-style-type: none;
+                    font: bold 11px verdana,arial,sans-serif;
+                    font-weight: bold;
+                    font-size: 1em;
+                    margin: 0;
+                    padding-left: 0;
+
+                    .tab {
+                        align-items: center;
+                        justify-content: center;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        word-wrap: break-word;
+                        border-radius: 0.4em 0.4em 0 0;
+                        background: $tabsLabelBg;
+                        margin: 0 0.1em 0 0;
+                        min-width: 12.5em;
+
+                        &:hover,
+                        &:focus {
+                            outline: 1px solid $tableHeaderColor;
+                            outline-offset: -1px;
+                        }
+
+                        &:hover:not(.li-selected) {
+                            background: $tabsLabelDisabled;
+                            border-radius: 0.4em 0.4em 0 0;
+                            color: $tabsPrimaryColor;
+                        }
+
+                        &.li-selected {
+                            background: $tabsPrimaryColor;
+                            
+                            .tab-label {
+                                color: $tabsBaseColor;
+                            }
+                        }
+
+                        .tabs-button-label {
+                            display: none;
+                        }
+
+                        .delete-tab-button {
+                            height: 1.5em;
+                            width: 2em;
+                            border: none;
+                            cursor: pointer;
+                            vertical-align: middle;
+
+                            @include svgAsBackground($tabsPrimaryColor, "../img/close.svg");
+                        }
+
+                        .delete-tab-button-selected {
+                            @include svgAsBackground($tabsBaseColor, "../img/close.svg");
+                        }
+                        
+                        .tab-label {
+                            display: inline-block;
+                            padding: 0.7em;
+                            color: $tabsPrimaryColor;
+                            
+                            &:focus {
+                                outline: none !important;
+                            }
+                        }
+
+                        .tab-panel:not(.tab-panel-selected) {
+                            display: none;
+                        }
+                    }
+                }
+            }
+
+            .tabviewPictoList {
+                min-width: 0.9em;
+
+                &-hidden {
+                    visibility: hidden;
+                }
+
+                &.touch {
+                    display: none;
+                }
+
+                .tabs-arrow-left {
+                    position: relative;
+                    width: 0.6em;
+                    height: 0.6em;
+                    margin-right: 0.15em;
+                    top: 0.9em;
+                    bottom: 0.15em;
+                    content: "";
+                    border-right: 0.15em solid $tabsArrowBorder;
+                    border-top: 0.15em solid $tabsArrowBorder;
+                    transform: rotate(224deg);
+
+                    .tabs-arrow-hidden-label {
+                        display: none;
+                    }
+                }                
+                .tabs-arrow-right {
+                    @extend .tabs-arrow-left;
+
+                    transform: rotate(44deg);
+                }
+                
+                .tabs-arrow-left.disabled,
+                .tabs-arrow-right.disabled  {
+                    border-right: 0.15em solid $tabsArrowDisabled;
+                    border-top: 0.15em solid $tabsArrowDisabled;
+                }
+            }
+        }
+
+        .tabs-group:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+    }
+    
+    .badge-selected-items-before-tab {
+        &:before {
+            display: flex;
+            flex-flow: row wrap;
+            justify-content: center;
+            align-content: center;
+            align-items: center;
+            width: 1.8em;
+            height: 1.8em;
+            font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+            font-size: 0.75em;
+            font-weight: 600;
+            content: attr(data-badge);
+            background: $globalErrorColor;
+            border-radius: 50%;
+            color: $tabsBaseColor;
+            min-width: 1.8em;
+        }
+    }
+}

@@ -1,0 +1,294 @@
+@import '../../../../src/sass/core';
+
+/// Couleurs propres au composant
+$ddLanguageBoxShadow: rgba(0, 0, 0, 0.45);
+$globalTimeOutColor: rgba(46, 88, 110, 1); //#2e586e
+$btnGlobalStates: theme-color($variant: 'states');
+
+%fixedElem {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+/// mixin message pour générer les classes liées aux alert/warning/infos
+@include message (
+    "error",
+    $notoBold,
+    $notoRegular,
+    $color: $globalErrorColor
+);
+
+@include message (
+    "warning",
+    $notoBold,
+    $notoRegular,
+    $color: $globalWarningColor
+);
+
+@include message (
+    "info",
+    $notoBold,
+    $notoRegular,
+    $color: $globalInfoColor
+);
+
+@include message (
+    $class: "personnal",
+    $title: $notoBold,
+    $text: $notoRegular
+);
+
+.messageBox {
+    h1 {
+        span {
+            display: inline-block;
+            vertical-align: middle;
+        }
+    }
+}
+
+.stack-dev {
+    margin: 1em 0 0 1em;
+
+    .stack-dev-title {
+        font-size: 1.5em;
+    }
+    
+    .stack-dev-line {
+        margin-left: 2em;
+    }
+}
+
+.error-button-open {
+    float: right;
+    height: 1.625em;
+    width: 1.625em;
+    border: none;
+    font-size: 1em;
+    background-color: transparent;
+    cursor: pointer;
+    svg {
+        fill: $globalErrorColor;
+    }
+    svg:nth-child(1) {
+        display: inherit;
+    }
+    svg:nth-child(2) {
+        display: none;
+    }
+
+    &:hover,
+    &:focus {
+        border-radius: 50%;
+        outline: none;
+        box-shadow: 0 0 0.3em 0em $btnGlobalStates;
+        transition: all 0.3s;
+    }
+
+}
+
+.error-button-close {
+    @extend .error-button-open;
+
+    svg:nth-child(1) {
+        display: none;
+    }
+    svg:nth-child(2) {
+        display: inherit;
+    }
+
+}
+
+.error-message-list.close,
+.personnal-message-list.close,
+.warning-message-list.close {
+    display: none;
+}
+
+.info-button {
+    @extend .error-button-open;
+    svg {
+        fill: $globalInfoColor;
+    }
+
+}
+
+.notification-timeout {
+    position: fixed;
+    right: 0;
+    bottom: 4.2em;
+    padding: 0.5em;
+    font-family: $notoBold;
+    line-height: 2em;
+    background: $baseColorLight;
+    color: $globalTimeOutColor;
+    box-shadow: 0 0 0.3em $ddLanguageBoxShadow;
+
+    .notifWrap {
+        display: block;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+    }
+
+    .notification-session-message {
+        div {
+            line-height: 1.2em;
+
+            a {
+                cursor: pointer;
+                display: block;
+                height: 100%;
+                width: 100%;
+            }
+        }
+    }
+}
+
+.notification-expanded {
+    transition: width 1s;
+    opacity: 1;
+    padding-top: 0.5em;
+}
+
+.notification-reduced {
+    width: 0;
+    opacity: 0;
+    height: 0;
+    font-size: 1em;
+}
+
+.notification-idp-timeout {
+    position: fixed;
+    right: 41%;
+    top: 7.5em;
+    padding: 0.5em;
+    width: 20em;
+    line-height: 2em;
+    color: $globalTimeOutColor;
+    background: $baseColorLight;
+    font-family: $roboto;
+    font-size: 1em;
+    box-shadow: 0 0.3em 0.3em $ddLanguageBoxShadow;
+
+    .notification-session-message {
+        div {
+            line-height: 1.2em;
+
+            a {
+                cursor: pointer;
+            }
+        }
+    }
+
+    .notification-session-idp-button {
+        position: absolute;
+        text-align: end;
+        right: 0.1em;
+        top: 0.1em;
+        width: 100%;
+
+        img {
+            height: 1.5em;
+        }
+    }
+}
+
+.notification-idp-expanded {
+    transition: width 1s;
+    opacity: 1;
+    padding-top: 0.5em;
+}
+
+.notification-idp-reduced {
+    width: 0;
+    opacity: 0;
+    height: 0;
+    font-size: 0;
+}
+
+.notification {
+    &__wrapper {
+        @extend %fixedElem;
+    }
+
+    &__close {
+        @extend %fixedElem;
+        background: rgba(0, 0, 0, 0.6);
+        cursor: pointer;
+    }
+
+    &__info {
+        position: absolute;
+        width: 45%;
+        margin: 0 auto;
+        left: 25%;
+        z-index: 9999;
+        background: #FFF;
+        box-shadow: 1px 5px 14px black;
+        padding: 2%;
+        border-radius: 0.5em;
+        animation: slideIn 0.3s ease-in-out forwards;
+
+        ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .info-button {
+            position: absolute;
+            right: 1%;
+            top: 10%;
+        }
+    }
+}
+
+.isHide {
+    animation: slideOut 0.3s ease-in-out;
+}
+
+.personnal-message-list,
+.info-message-list,
+.error-message-list,
+.warning-message-list {
+    li > a {
+        outline-color: currentColor;
+    }
+}
+
+@media screen and (max-width: #{$mediaXS-405}) {
+    .personnal-message-list,
+    .info-message-list,
+    .error-message-list,
+    .warning-message-list {
+        padding-left: 1.45em;
+        list-style: square;
+    }
+}
+
+@keyframes slideIn {
+    0% {
+        top: 0;
+        opacity: 0;
+    } 
+    100% {
+        top: 15em;
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    0% {
+        top: 15em;
+        opacity: 1;
+    } 
+    100% {
+        top: 0em;
+        opacity: 0;
+    }
+}

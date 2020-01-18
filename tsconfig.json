@@ -18,6 +18,7 @@
   "include": [
     "src/**/*.ts*",
     "test/**/*.ts*",
+    "sample/**/*.ts*"
   ],
   "exclude": [
     "istanbul"
