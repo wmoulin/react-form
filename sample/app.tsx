@@ -6,11 +6,11 @@ import "src/sass/test.scss";
 import { InputField } from './components/input-field';
 import { GroupField } from './components/group-field';
 import { RegisterField } from '../src/hoc/register-field';
-import { TabList } from './components/tabs/tab-list.js';
-import { TabPanel } from './components/tabs/tab-panel.js';
-import { TabPanels } from './components/tabs/tab-panels.js';
-import { TabListItem } from './components/tabs/tab-list-item.js';
-import { TabsLite } from './components/tabs/tabs-lite.js';
+import { TabList } from './components/tabs/tab-list';
+import { TabPanel } from './components/tabs/tab-panel';
+import { TabPanels } from './components/tabs/tab-panels';
+import { TabListItem } from './components/tabs/tab-list-item';
+import { TabsLite } from './components/tabs/tabs-lite';
 
 function App() {
 
