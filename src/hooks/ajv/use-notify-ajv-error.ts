@@ -85,6 +85,7 @@ export default function useNotifyAjvError(notifId, id, formMessages, formContext
                             nextElt.innerText =  "";
                         }
                         field.dispatchEvent(new CustomEvent('errors', { 'detail': {errors, name: field.name} }));
+
                     }
                 }
             });
