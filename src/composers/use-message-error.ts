@@ -172,7 +172,7 @@ export default function useMessageError(fromElt:MutableRefObject<HTMLFormElement
                         }
                     } else {
                         field.parentElement && field.parentElement.classList.remove("parent-field-error");
-                        field.classList.remove("field-error");
+                        field.classList && field.classList.remove("field-error");
                         field.setAttribute("aria-invalid", "false");
                         //field.setAttribute("data-error-msg", "");
                         let nextElt: HTMLElement = field.nextSibling as HTMLElement;

@@ -8,6 +8,7 @@ import { FormContext, FormAPI } from "src/contexts/form-context";
 import useExtractData from 'src/hooks/use-extract-data';
 import useAjvValidator from 'src/hooks/ajv/use-ajv-validator';
 import useNotifyAjvError from 'src/hooks/ajv/use-notify-ajv-error';
+import { Notification } from '../sample/temp/notification/notification';
 
 const messages = require("src/ressources/messages.json");
 const i18nMessages = Utils.getCls("hornet.internationalization") || messages;
@@ -25,6 +26,7 @@ export const Form: React.FC<FormProps> = (props: FormProps) => {
     const [markRequired, setMarkRequired] = React.useState(props.markRequired || false);
     const fromElt = React.useRef(null);
     const apiRef = React.useRef({} as FormAPI);
+    apiRef.current.form = fromElt as any;
     //const {extractData, extractFields} = getExtractData(fromElt);
     //const {notifyErrors, cleanFormErrors} = useMessageError(fromElt, i18nMessages, extractFields, props.notifId, props.id, props.formMessages);
     useAjvValidator(props.schema, props.validationOptions, props.customValidators, props.onBeforeSubmit, props.onSubmit, props.calendarLocale, apiRef);
@@ -55,7 +57,7 @@ export const Form: React.FC<FormProps> = (props: FormProps) => {
     if ( !formProps["encType"] && isMultiPartForm(props.children)) {
         formProps["encType"] = "multipart/form-data";
     }
-    apiRef
+    
     const textHtmlProps = {
         lang: props.textLang ? props.textLang : null,
     };
@@ -63,8 +65,9 @@ export const Form: React.FC<FormProps> = (props: FormProps) => {
     useExtractData(apiRef);
     
     return (
-        <section id="form-content" className={classNames(formClass)}>
+        <section id={`${props.id}-form-content`} className={classNames(formClass)}>
             <FormContext.Provider value={apiRef}>
+            <Notification id={`${props.id}-form-notification`} />
                 <form {...formProps} >
                     {(props.subTitle || props.text
                         || (markRequired && !props.isMandatoryFieldsHidden)) ?
@@ -75,7 +78,7 @@ export const Form: React.FC<FormProps> = (props: FormProps) => {
                             {markRequired ?
                                 <p className="discret">{I18nUtils.getI18n("form.fillField", undefined, i18nMessages)}</p> : null}
                         </div>
-                        : null}i18nMessages
+                        : null}
                     {(props.children) ?
                         <div className="form-content">
                             {props.children}

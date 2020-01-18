@@ -20,12 +20,13 @@ export interface State {
 export class InputField extends React.Component<Props, State> {
 
     //static contextType = FormContext;
-
+    public element;
     constructor(props:Props, context:any) {
         super(props, context);
         this.state = {
             value: this.props.value
         }
+        this.element = React.createRef();
     }
     
     render():JSX.Element {
@@ -35,10 +36,19 @@ export class InputField extends React.Component<Props, State> {
                     {this.props.label}
                 </label>
                 <input type={"text"} required={this.props.required} disabled={this.props.disabled} readOnly={this.props.readonly}
-                value={this.state.value} defaultValue={this.props.defaultValue}></input>
+                value={this.state.value} defaultValue={this.props.defaultValue} ref={this.element}></input>
                 {this.renderError()}
             </>
         );
+    }
+
+    /**
+     * Surcharge de la méthode
+     * @param value
+     * @returns {InputField}
+     */
+    getCurrentValue(): any {
+        return this.state.value;
     }
 
     /**
@@ -55,8 +65,12 @@ export class InputField extends React.Component<Props, State> {
      * @param value
      * @returns {InputField}
      */
-    setError(errors: any[]): void {
-        this.setState({ errors });
+    setErrors(errors: any[]): void {
+        this.setState({ errors }, () => {
+            var event = new CustomEvent('errors', { 'detail': {errors, name: this.props.name} });
+            //distribuer l'événement.
+            this.element.current.dispatchEvent(event);
+        });
     }
 
     renderError(): JSX.Element {

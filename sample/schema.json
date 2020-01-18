@@ -4,7 +4,11 @@
   "description": "Validation des données de formulaire",
   "type": "object",
   "required": [
-    "input"
+    "input",
+    "InputField",
+    "InputField1",
+    "InputField2",
+    "InputField3"
   ],
   "properties": {
     

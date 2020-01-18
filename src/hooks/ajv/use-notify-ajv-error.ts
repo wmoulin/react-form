@@ -1,4 +1,4 @@
-import { useRef, useContext } from 'react';
+import { useRef, useContext, Component } from 'react';
 import { FormContext } from "src/contexts/form-context";
 import { Utils } from "hornet-js-utils";
 import { fireEvent } from "src/events/event-manager";
@@ -33,40 +33,56 @@ export default function useNotifyAjvError(notifId, id, formMessages, formContext
 
             /* Met à jour les erreurs affichées par chaque composant champ */
             Object.keys(fields).forEach((key: string) => {
-                const field: HTMLEmbedElement = fields[key][0] as HTMLEmbedElement;
+                const field: HTMLEmbedElement & Component = fields[key][0] as any;
 
                 let errors = notificationsError.getNotifications().filter((error: INotificationType): boolean => {
-                    return (error.field === field.name
+                    return (error.field === key
                         || (error.additionalInfos
                             && error.additionalInfos.linkedFieldsName
-                            && error.additionalInfos.linkedFieldsName.indexOf(field.name) > -1)
+                            && error.additionalInfos.linkedFieldsName.indexOf(key) > -1)
                     );
                 });
 
                 if (errors && errors.length > 0) {
-                    field.parentElement && field.parentElement.classList.add("parent-field-error");
-                    field.classList.add("field-error");
-                    field.setAttribute ("aria-invalid", "true");
-                    //field.setAttribute("data-error-msg", errors.map((item) => item.text).join(","));
-                    let nextElt: HTMLElement = field.nextSibling as HTMLElement;
-                    if(!nextElt ||  !(nextElt as HTMLElement).classList.contains("container-field-error")) {
-                        let errorField = document.createElement("div");
-                        errorField.innerText =  errors.map((item) => item.text).join(",");
-                        errorField.classList.add("container-field-error");
-                        field.parentElement.insertBefore(errorField, field.nextSibling);
+                    if(field.setState && typeof field.setState == "function") {
+                        if ((field as any).setErrors && typeof (field as any).setErrors == "function") {
+                            (field as any).setErrors(errors)
+                        } else {
+                            field.setState({errors: errors});
+                        }
                     } else {
-                        nextElt.classList.replace( "container-field-error-hidden", "container-field-error-show" );
-                        nextElt.innerText =  errors.map((item) => item.text).join(",");
+                        field.parentElement && field.parentElement.classList.add("parent-field-error");
+                        field.classList.add("field-error");
+                        field.setAttribute ("aria-invalid", "true");
+                        //field.setAttribute("data-error-msg", errors.map((item) => item.text).join(","));
+                        let nextElt: HTMLElement = field.nextSibling as HTMLElement;
+                        if(!nextElt ||  !(nextElt as HTMLElement).classList.contains("container-field-error")) {
+                            let errorField = document.createElement("div");
+                            errorField.innerText =  errors.map((item) => item.text).join(",");
+                            errorField.classList.add("container-field-error");
+                            field.parentElement.insertBefore(errorField, field.nextSibling);
+                        } else {
+                            nextElt.classList.replace( "container-field-error-hidden", "container-field-error-show" );
+                            nextElt.innerText =  errors.map((item) => item.text).join(",");
+                        }
                     }
                 } else {
-                    field.parentElement && field.parentElement.classList.remove("parent-field-error");
-                    field.classList.remove("field-error");
-                    field.setAttribute("aria-invalid", "false");
-                    //field.setAttribute("data-error-msg", "");
-                    let nextElt: HTMLElement = field.nextSibling as HTMLElement;
-                    if(nextElt &&  nextElt.classList.contains("container-field-error")) {
-                        nextElt.classList.replace( "container-field-error-show", "container-field-error-hidden" );
-                        nextElt.innerText =  "";
+                    if(field.setState && typeof field.setState == "function") {
+                        if ((field as any).setErrors && typeof (field as any).setErrors == "function") {
+                            (field as any).setErrors(undefined)
+                        } else {
+                            field.setState({errors: undefined});
+                        }
+                    } else {
+                        field.parentElement && field.parentElement.classList.remove("parent-field-error");
+                        field.classList && field.classList.remove("field-error");
+                        field.setAttribute("aria-invalid", "false");
+                        //field.setAttribute("data-error-msg", "");
+                        let nextElt: HTMLElement = field.nextSibling as HTMLElement;
+                        if(nextElt &&  nextElt.classList.contains("container-field-error")) {
+                            nextElt.classList.replace( "container-field-error-show", "container-field-error-hidden" );
+                            nextElt.innerText =  "";
+                        }
                     }
                 }
             });

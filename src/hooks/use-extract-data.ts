@@ -70,10 +70,12 @@ export default function useExtractData(formContext:any=useContext(FormContext)) 
                 for (let index = 0; index < fromElt.current.elements.length; index++) {
         
                     const item: Element = fromElt.current.elements[index];
-                    if (fields[item["name"]]) {
-                        fields[item["name"]].push(item);
-                    } else {
-                        fields[item["name"]] = [item];
+                    if(item["name"]) {
+                        if (fields[item["name"]]) {
+                            fields[item["name"]].push(item);
+                        } else {
+                            fields[item["name"]] = [item];
+                        }
                     }
                 }
             }

@@ -23,7 +23,8 @@ $formBorder: rgba(221, 221, 221, 1); //#ddd
 
 .fielderror-content {
     color: $globalErrorColor;
-    font-style: italic    display: flex;
+    font-style: italic;
+    display: flex;
     position: relative;
     flex-direction: column;;
 }
