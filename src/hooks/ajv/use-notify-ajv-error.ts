@@ -65,7 +65,10 @@ export default function useNotifyAjvError(notifId, id, formMessages, formContext
                             nextElt.classList.replace( "container-field-error-hidden", "container-field-error-show" );
                             nextElt.innerText =  errors.map((item) => item.text).join(",");
                         }
+<<<<<<< HEAD
                         field.dispatchEvent(new CustomEvent('errors', { 'detail': {errors, name: field.name} }));
+=======
+>>>>>>> 6b4451b07e16462eff54d32ea4117c8c5547e2fa
                     }
                 } else {
                     if(field.setState && typeof field.setState == "function") {
@@ -84,7 +87,10 @@ export default function useNotifyAjvError(notifId, id, formMessages, formContext
                             nextElt.classList.replace( "container-field-error-show", "container-field-error-hidden" );
                             nextElt.innerText =  "";
                         }
+<<<<<<< HEAD
                         field.dispatchEvent(new CustomEvent('errors', { 'detail': {errors, name: field.name} }));
+=======
+>>>>>>> 6b4451b07e16462eff54d32ea4117c8c5547e2fa
                     }
                 }
             });
