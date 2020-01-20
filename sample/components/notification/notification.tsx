@@ -81,7 +81,8 @@ export class Notification extends React.Component<NotificationProps, any> {
 
     static INSTANCES = {};
     static ORDER = [];
-
+    protected eventErrorsListener;
+    public element:React.RefObject<any>;
     static defaultProps = {
         color: "black"
         
@@ -90,6 +91,7 @@ export class Notification extends React.Component<NotificationProps, any> {
     constructor(props?: NotificationProps, context?: any) {
         super(props, context);
         this.state = {...props};
+        this.element = React.createRef();
 /*            this.listen(ADD_NOTIFICATION_EVENT, (ev) => {
                 const state: NotificationContentState = {};
                 if (ev.detail.errors) state.errors = ev.detail.errors.getNotifications();
@@ -113,10 +115,10 @@ export class Notification extends React.Component<NotificationProps, any> {
                     ev.detail.id = Notification.ORDER[Notification.ORDER.length - 1];
                 }
                 else if (Notification.INSTANCES[ev.detail.id]) {
-                    Notification.INSTANCES[ev.detail.id].setState({
+                    Notification.INSTANCEfalse.id].setState({
                         infos: null,
                         errors: null,
-                        exceptions: null,
+                        exceptions: null,false
                         warnings: null,
                         personnals: null,
                     });
@@ -136,7 +138,7 @@ export class Notification extends React.Component<NotificationProps, any> {
                             }
                         });
                     }
-                }
+     public element:React.RefObject<any>;           }
             });
 
             this.listen(CLEAN_ALL_NOTIFICATION_EVENT, (ev) => {
@@ -148,6 +150,22 @@ export class Notification extends React.Component<NotificationProps, any> {
         }*/
     }
 
+    componentDidMount() {
+        if (this.element && this.element.current) {
+            this.eventErrorsListener = this.element.current.addEventListener('errors', (e: CustomEvent) => {
+                console.log("Notification event errors", e);
+                let errors = this.state.errors || {};
+                errors[`${e.detail.name}`] = e.detail.errors;
+                this.setState({errors})
+            }, true);
+        }
+    }
+
+    componentWillUnmount() {
+        if (this.element && this.element.current) {
+            this.element.current.removeEventListener("errors", this.eventErrorsListener, false);   
+        }
+    }
     /**
      * @inheritDoc
      */
@@ -155,7 +173,7 @@ export class Notification extends React.Component<NotificationProps, any> {
         console.debug("Notification render : ", this.props.id);
 
         return (
-            <div id={this.props.id}>
+            <div id={this.props.id} ref={this.element}>
                 <NotificationContent
                     errorsTitle={this.state.errorsTitle}
                     errors={this.state.errors}
@@ -184,6 +202,7 @@ export class Notification extends React.Component<NotificationProps, any> {
                     }}
                     idComponent={this.props.id}
                 />
+                {this.props.children}
             </ div>);
     }
 

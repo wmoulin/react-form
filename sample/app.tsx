@@ -11,6 +11,7 @@ import { TabPanel } from './components/tabs/tab-panel';
 import { TabPanels } from './components/tabs/tab-panels';
 import { TabListItem } from './components/tabs/tab-list-item';
 import { TabsLite } from './components/tabs/tabs-lite';
+import { Notification } from './components/notification/notification';
 
 function App() {
 
@@ -24,43 +25,45 @@ function App() {
       <header className="App-header">
       </header>
       <body>
-        <Form schema={schema}>
-          <GroupField id={"group-1"} label={"mon groupe"}>
-            <label htmlFor={"input-id"}>mon label</label>
+        <Notification id={"notification"}>
+          <Form schema={schema} id={"myform"}>
+            <GroupField id={"group-1"} label={"mon groupe"}>
+              <label htmlFor={"input-id"}>mon label</label>
+              <span>
+                <input id={"input-id"} type="text" name="input"></input>
+              </span>
+              <span>
+                <InputFieldRegisterField/>
+              </span>
+            </GroupField>
             <span>
-              <input id={"input-id"} type="text" name="input"></input>
+              <InputField1RegisterField/>
             </span>
-            <span>
-              <InputFieldRegisterField/>
-            </span>
-          </GroupField>
-          <span>
-            <InputField1RegisterField/>
-          </span>
-          <TabsLite>
-          <TabList>
-              <TabListItem>
-                <label>onglet 1</label>
-              </TabListItem>
-              <TabListItem>
-                <label>onglet 2</label>
-              </TabListItem>
-            </TabList>
-            <TabPanels>
-              <TabPanel>
-                <span>
-                  <InputField2RegisterField/>
-                </span>
-              </TabPanel>
-              <TabPanel>
-                <span>
-                  <InputField3RegisterField/>
-                </span>
-              </TabPanel>
-            </TabPanels>
-          </TabsLite>
-          <button type="submit">submit</button>
-        </Form>
+            <TabsLite>
+            <TabList>
+                <TabListItem>
+                  <label>onglet 1</label>
+                </TabListItem>
+                <TabListItem>
+                  <label>onglet 2</label>
+                </TabListItem>
+              </TabList>
+              <TabPanels>
+                <TabPanel>
+                  <span>
+                    <InputField2RegisterField/>
+                  </span>
+                </TabPanel>
+                <TabPanel>
+                  <span>
+                    <InputField3RegisterField/>
+                  </span>
+                </TabPanel>
+              </TabPanels>
+            </TabsLite>
+            <button type="submit">submit</button>
+          </Form>
+        </Notification>
       </body>
     </div>
   );
