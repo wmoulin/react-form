@@ -1,8 +1,8 @@
 import { useState, useRef, MutableRefObject } from 'react';
 import { ErrorObject, DependenciesParams } from 'ajv';
-import { CLEAN_NOTIFICATION_EVENT, ADD_NOTIFICATION_EVENT } from "src/events/notification-events";
-import { fireEvent } from "src/events/event-manager";
-import { Notifications, NotificationType, INotificationType } from "src/events/notification";
+import { CLEAN_NOTIFICATION_EVENT, ADD_NOTIFICATION_EVENT } from "../events/notification-events";
+import { fireEvent } from "../events/event-manager";
+import { Notifications, NotificationType, INotificationType } from "../events/notification";
 import isString = require("lodash.isstring");
 import get = require("lodash.get");
 import IntlMessageFormat from "intl-messageformat";

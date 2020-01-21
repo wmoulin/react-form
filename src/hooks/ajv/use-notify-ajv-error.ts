@@ -1,16 +1,16 @@
 import { useRef, useContext, Component } from 'react';
-import { FormContext } from "src/contexts/form-context";
+import { FormContext } from "../../contexts/form-context";
 import { Utils } from "hornet-js-utils";
-import { fireEvent } from "src/events/event-manager";
-import { ADD_NOTIFICATION_EVENT, CLEAN_NOTIFICATION_EVENT } from "src/events/notification-events";
-import { Notifications, NotificationType, INotificationType } from "src/events/notification";
+import { fireEvent } from "../../events/event-manager";
+import { ADD_NOTIFICATION_EVENT, CLEAN_NOTIFICATION_EVENT } from "../../events/notification-events";
+import { Notifications, NotificationType, INotificationType } from "../../events/notification";
 import { ErrorObject, DependenciesParams } from 'ajv';
 import isString = require("lodash.isstring");
 import get = require("lodash.get");
 import IntlMessageFormat from "intl-messageformat";
 import { I18nUtils } from "hornet-js-utils/src/i18n-utils";
 
-const messages = require("src/ressources/messages.json");
+const messages = require("../../ressources/messages.json");
 const i18nMessages = Utils.getCls("hornet.internationalization") || messages;
 const logger = console;
 

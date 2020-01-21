@@ -1,6 +1,6 @@
 import get = require("lodash.get");
 import set = require("lodash.set");
-import { FormContext } from "src/contexts/form-context";
+import { FormContext } from "../contexts/form-context";
 import { useContext, useCallback } from 'react';
 import { MutableRefObject } from 'react';
 

@@ -1,8 +1,8 @@
 import { useRef, useContext } from 'react';
-import { FormContext } from "src/contexts/form-context";
+import { FormContext } from "../../contexts/form-context";
 import * as ajv from "ajv";
 import { Utils } from "hornet-js-utils";
-import { DataValidator, IValidationResult, ICustomValidation } from 'src/validation/data-validator';
+import { DataValidator, IValidationResult, ICustomValidation } from "../../validation/data-validator";
 
 const logger = console;
 

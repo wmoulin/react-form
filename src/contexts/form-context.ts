@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useRef } from 'react';
-import { ICustomValidation } from 'src/validation/data-validator';
+import { ICustomValidation } from "../validation/data-validator";
 import { ErrorObject } from 'ajv';
 
 type FormElement = Element | HTMLElement;

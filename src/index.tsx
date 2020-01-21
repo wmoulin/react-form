@@ -1,16 +1,16 @@
 import * as classNames from "classnames";
-import "src/sass/form.scss";
+import "./sass/form.scss";
 import * as React from 'react';
 import { I18nUtils } from "hornet-js-utils/src/i18n-utils";
 import { Utils } from "hornet-js-utils";
-import { debounce } from "src/utils/debounce";
-import { FormContext, FormAPI } from "src/contexts/form-context";
-import useExtractData from 'src/hooks/use-extract-data';
-import useAjvValidator from 'src/hooks/ajv/use-ajv-validator';
-import useNotifyAjvError from 'src/hooks/ajv/use-notify-ajv-error';
+import { debounce } from "./utils/debounce";
+import { FormContext, FormAPI } from "./contexts/form-context";
+import useExtractData from "./hooks/use-extract-data";
+import useAjvValidator from "./hooks/ajv/use-ajv-validator";
+import useNotifyAjvError from "./hooks/ajv/use-notify-ajv-error";
 import { Notification } from '../sample/components/notification/notification';
 
-const messages = require("src/ressources/messages.json");
+const messages = require("./ressources/messages.json");
 const i18nMessages = Utils.getCls("hornet.internationalization") || messages;
 
 const logger = console;

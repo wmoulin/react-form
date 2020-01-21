@@ -1,4 +1,4 @@
-import { Event } from "src/events/event-manager";
+import { Event } from "./event-manager";
 import { BaseError } from "hornet-js-utils/src/exception/base-error";
 
 export interface AddNotificationEventDetail {

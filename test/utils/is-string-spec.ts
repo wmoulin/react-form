@@ -1,5 +1,5 @@
 var assert = require('assert');
-import isString from "src/utils/is-string";
+import isString from "../../src/utils/is-string";
 
 describe("isString", () => {
     it("should return true", () => {
