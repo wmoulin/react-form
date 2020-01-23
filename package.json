@@ -2,14 +2,15 @@
   "name": "react-form",
   "version": "0.0.0",
   "scripts": {
-    "prestart": "hb compile",
+    "prestart": "hb compile:run",
     "start": "npm run copy:others:src  && npm run copy:others:sample",
     "poststart": "env NODE_ENV=sample hb wcr",
     "test": "mocha",
     "coverage": "nyc npm run test",
     "instrument": "nyc instrument ./test ./output",
     "copy:others:src": "cpx 'src/**/*.{json,scss,jpg,svg}' 'bin/src'",
-    "copy:others:sample": "cpx 'sample/**/*.{json,scss,jpg,svg}' 'bin/sample'"
+    "copy:others:sample": "cpx 'sample/**/*.{json,scss,jpg,svg}' 'bin/sample'",
+    "build:sample": "hb ppc"
   },
   "dependencies": {
     "@types/lodash.endswith": "^4.2.6",
@@ -38,6 +39,7 @@
     "cpx": "^1.5.0",
     "env": "0.0.2",
     "express": "~4.17.1",
+    "hornet-js-builder": "^2.0.4",
     "html-webpack-plugin": "^3.2.0",
     "loader-utils": "^1.2.3",
     "mocha": "^7.0.0",

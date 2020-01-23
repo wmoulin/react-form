@@ -48,8 +48,7 @@ module.exports = (project, conf, helper, webpackConfigPart, configuration, webpa
         plugins: [
             ...configuration.plugins,
             ...projectPlugins,
-            new HtmlWebpackPlugin( {template: "./static/index.html", filename: "index.html"}),
-            new webpack.HotModuleReplacementPlugin()
+            new HtmlWebpackPlugin( {template: "./static/index.html", filename: "index.html"})
         ],
         externals : (context, request, callback) => {
             if(/log4js\/lib\/appenders/.test(context) && (!/console/.test(request)) && (/^\.\//.test(request))) {
@@ -75,23 +74,8 @@ module.exports = (project, conf, helper, webpackConfigPart, configuration, webpa
                 minSize: 3000000
             },
         },
-        watchOptions: {
-            aggregateTimeout: 3000
-        },
-        mode: "development",
-        devtool: 'inline-source-map',
-        devServer: {
-            contentBase: path.join(project.dir, "static"),
-            publicPath: '/',
-            compress: true,
-            port: 9000,
-            hot: true,
-            watchContentBase: true,
-            stats: {
-                children: false, // Hide children information
-                maxModules: 0 // Set the maximum number of modules to be shown
-            },
-        }
+        mode: "production",
+        devtool: 'inline-source-map'
     }
 
 }
