@@ -18,18 +18,24 @@ export interface MessageItemProps {
     anchor?: string;
     className?: string;
     id?: string;
+    element?: any;
 }
-
 /**
  * Composant MessageItem
  */
 export class MessageItem extends React.Component<MessageItemProps, any> {
 
-    setFocus(e: React.MouseEvent<HTMLElement>) {
+    setFocus = (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
-        const elem = document.getElementsByName(this.state.field);
+        if (this.props.element) {
+            if (this.props.element.setFocus) {this.props.element.setFocus(); return ;}
+            if (this.props.element.setState) {this.props.element.setState({focus: true}); return ;}
+            if (this.props.element.focus) {this.props.element.focus(); return ;}
+        } 
+
+        const elem = document.getElementsByName(this.props.field);
         let element = elem && elem.length > 0 ?
-            document.getElementsByName(this.state.field)[ 0 ] : document.getElementById(this.state.field);
+            document.getElementsByName(this.props.field)[ 0 ] : document.getElementById(this.props.field);
         if (element && element.focus) {
 
             /*if (element && element.dataset && element.dataset.tabindex) {
@@ -41,15 +47,16 @@ export class MessageItem extends React.Component<MessageItemProps, any> {
 
             element.focus();
         } else {
-            element = document.getElementsByName(this.state.field + "$text") ?
-                document.getElementsByName(this.state.field + "$text")[ 0 ] :
-                document.getElementById(this.state.field + "$text");
+            element = document.getElementsByName(this.props.field + "$text") ?
+                document.getElementsByName(this.props.field + "$text")[ 0 ] :
+                document.getElementById(this.props.field + "$text");
             if (element && element.focus) {
                 element.focus();
             } else {
-                console.error("Impossible de mettre le focus sur l'élément", this.state.field);
+                console.error("Impossible de mettre le focus sur l'élément", this.props.field);
             }
         }
+
     }
 
     /**
@@ -58,9 +65,9 @@ export class MessageItem extends React.Component<MessageItemProps, any> {
      * @protected
      */
     protected renderLink() {
-        let message = I18nUtils.getI18n(this.state.text, undefined, i18nMessages);
-        const element = document.getElementsByName(this.state.field) ?
-            document.getElementsByName(this.state.field)[ 0 ] : document.getElementById(this.state.field);
+        let message = I18nUtils.getI18n(this.props.text, undefined, i18nMessages);
+        const element = document.getElementsByName(this.props.field) ?
+            document.getElementsByName(this.props.field)[ 0 ] : document.getElementById(this.props.field);
         if (element && element.dataset && element.dataset.tabtitle) {
             message = element.dataset.tabtitle + " - " + message;
         }
@@ -81,7 +88,7 @@ export class MessageItem extends React.Component<MessageItemProps, any> {
     protected renderSpan() {
         return (
             <span className={this.props.className}>
-                {I18nUtils.getI18n(this.state.text, undefined, i18nMessages)}
+                {I18nUtils.getI18n(this.props.text, undefined, i18nMessages)}
                 {this.props.children}
             </span>
         );
@@ -93,7 +100,7 @@ export class MessageItem extends React.Component<MessageItemProps, any> {
     render(): JSX.Element {
         return (
             <li>
-                {(!this.state.anchor) ? this.renderSpan() : this.renderLink()}
+                {(!this.props.anchor) ? this.renderSpan() : this.renderLink()}
             </li>
         );
     }

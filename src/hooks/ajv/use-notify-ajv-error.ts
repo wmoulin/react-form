@@ -169,6 +169,7 @@ export default function useNotifyAjvError(notifId, id, formMessages, formContext
             erreurNotification.anchor = fieldName + "_anchor";
             erreurNotification.field = fieldName;
             erreurNotification.additionalInfos = error.params;
+            (erreurNotification as any).element = fields[ fieldName ][0];
 
             let complement: any = { ...error.params };
 

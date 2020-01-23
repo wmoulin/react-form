@@ -42,6 +42,8 @@ export class InputField extends React.Component<Props, State> {
         );
     }
 
+
+
     /**
      * Surcharge de la méthode
      * @param value
@@ -69,6 +71,10 @@ export class InputField extends React.Component<Props, State> {
         this.setState({ errors }, () => {
             this.element.current.dispatchEvent(new CustomEvent('errors', { 'detail': {errors, name: this.props.name} }));
         });
+    }
+
+    setFocus = () => {
+        this.element.current.focus();
     }
 
     renderError(): JSX.Element {
