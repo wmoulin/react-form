@@ -67,24 +67,25 @@ export const Form: React.FC<FormProps> = (props: FormProps) => {
     return (
         <section id={`${props.id}-form-content`} className={classNames(formClass)}>
             <FormContext.Provider value={apiRef}>
-            <Notification id={`${props.id}-form-notification`} />
-                <form {...formProps} >
-                    {(props.subTitle || props.text
-                        || (markRequired && !props.isMandatoryFieldsHidden)) ?
-                        <div className="form-titles">
-                            {props.subTitle ? <h3 className="form-soustitre">{props.subTitle}</h3> : null}
-                            {props.text ?
-                                <p className="form-texte" {...textHtmlProps}>{props.text}</p> : null}
-                            {markRequired ?
-                                <p className="discret">{I18nUtils.getI18n("form.fillField", undefined, i18nMessages)}</p> : null}
-                        </div>
-                        : null}
-                    {(props.children) ?
-                        <div className="form-content">
-                            {props.children}
-                        </div>
-                        : null}
-                </form>
+                <Notification id={`${props.id}-form-notification`} >
+                    <form {...formProps} >
+                        {(props.subTitle || props.text
+                            || (markRequired && !props.isMandatoryFieldsHidden)) ?
+                            <div className="form-titles">
+                                {props.subTitle ? <h3 className="form-soustitre">{props.subTitle}</h3> : null}
+                                {props.text ?
+                                    <p className="form-texte" {...textHtmlProps}>{props.text}</p> : null}
+                                {markRequired ?
+                                    <p className="discret">{I18nUtils.getI18n("form.fillField", undefined, i18nMessages)}</p> : null}
+                            </div>
+                            : null}
+                        {(props.children) ?
+                            <div className="form-content">
+                                {props.children}
+                            </div>
+                            : null}
+                    </form>
+                </Notification>
             </FormContext.Provider>
         </section>
     );
