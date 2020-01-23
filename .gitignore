@@ -15,7 +15,8 @@ bin
 .history
 
 #webpack
-static
+./static/**
+!./static/index.html
 
 #nyc
 .nyc_output
