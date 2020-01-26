@@ -2,6 +2,7 @@ import * as React from "react";
 import { BaseError } from "hornet-js-utils/src/exception/base-error";
 //import { Accordion } from "src/widget/accordion/accordion";
 import { NotificationContent } from "./notification-content"
+import { FormContext } from '../../../src/contexts/form-context';
 
 import "./sass/notification.scss";
 
@@ -25,18 +26,6 @@ export interface NotificationProps {
 }
 
 /**
- * Type d'erreur 
- */
-export enum notificationType {
-
-    ERROR = "error",
-    WARNING = "warning",
-    PERSONNALS = "personnal",
-    INFOS = "info",
-    EXCEPTION = "exception",
-}
-
-/**
  * Composant Notification
  */
 export class Notification extends React.Component<NotificationProps, any> {
@@ -51,18 +40,20 @@ export class Notification extends React.Component<NotificationProps, any> {
 
     constructor(props?: NotificationProps, context?: any) {
         super(props, context);
-        this.state = {...props};
+        this.state = {...props } ;
         this.element = React.createRef();
     }
 
     componentDidMount() {
         if (this.element && this.element.current) {
             this.eventErrorsListener = this.element.current.addEventListener(this.getDerivedEventFromPrefix(), (e: CustomEvent) => {
-                console.log("Notification event errors", e);
-                let errors = this.state.errors || {};
-                errors[`${e.detail.name}`] = e.detail.errors;
-                e.stopImmediatePropagation();
-                this.setState({errors});
+                if(!e.detail.id || e.detail.id == (this.context && this.context.current.form && this.context.current.form.current.id)) {
+                    console.log("Notification event errors", e);
+                    let errors = this.state.errors || {};
+                    errors[`${e.detail.name}`] = e.detail.errors;
+                    e.detail.stopOnFirst && e.stopImmediatePropagation();
+                    this.setState({errors});
+                }
             }, true);
         }
     }
@@ -122,12 +113,11 @@ export class Notification extends React.Component<NotificationProps, any> {
 
     /**
      * Permet de setter les notifications de type WARNING
-this.props.prefix
-this.props.prefix
-this.props.prefix
-this.props.prefix..this.state.warnings, ...warnings}});
-this.props.prefix
-this.props.prefix
+     * @param warnings 
+     */
+    setWarnings(warnings) {
+        this.setState({warnings: {...this.state.warnings, ...warnings}});
+    }
     /**
      * Permet de setter les notifications de type ERROR
      * @param errors 
@@ -149,3 +139,4 @@ this.props.prefix
     }
 }
 
+Notification.contextType = FormContext;

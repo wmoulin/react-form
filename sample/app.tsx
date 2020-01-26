@@ -25,7 +25,7 @@ function App() {
       <header className="App-header">
       </header>
       <body>
-        <Notification id={"notification"}>
+        <Notification id={"notification"} /*prefix={"global"}*/>
           <Form schema={schema} id={"myform"}>
             <GroupField id={"group-1"} label={"mon groupe"}>
               <label htmlFor={"input-id"}>mon label</label>

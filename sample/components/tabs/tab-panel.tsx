@@ -8,15 +8,17 @@ type TabPanelProps = React.HTMLAttributes<HTMLDivElement> & {
     divId?: string;
 };
 
-export const TabPanelView : React.SFC<TabPanelProps> = ({ id, children, isActive, tabRef, index, divId, ...rest }) => (
-    <div
-        tabIndex={0}
+export const TabPanelView : React.SFC<TabPanelProps> = ({ id, children, isActive, tabRef, index, divId, ...rest }) => {
+    const panelStyle : React.CSSProperties = isActive ? {} : { position: "absolute", top: -9999, left: -9999};
+    return (<div
+        tabIndex={-1}
         aria-labelledby={`${id}-tab-${index}`}
-        hidden={!isActive}
+        //hidden={!isActive}
+        style={panelStyle}
         ref={tabRef} {...rest} id={divId}>
         {React.Children.map(children, (child: any) => {return typeof child === "object" ? React.cloneElement(child) : child})}
-    </div>
-);
+    </div>)
+};
 
 export class TabPanel extends React.Component<TabPanelProps, any>{
 

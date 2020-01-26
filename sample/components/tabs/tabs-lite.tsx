@@ -37,12 +37,20 @@ export interface TabsLiteState {
 
 const noop = () => {};
 
+const listen = function(index, evt) {
+    this.setActiveTab(index, () => (evt.srcElement || evt.target).focus());
+    var elem = evt.srcElement || evt.target;
+    console.log("focus: " + (elem as any).name);
+};
+
 export class TabsLite extends React.Component<TabsLiteProps, any> {
 
     /**tableau des ref des tabListItem */
     tabRefs : HTMLElement[] = [];
     /**tableau des ref des tabPanel */
     tabPanelRefs : HTMLElement[] = [];
+    /**tableau des ref des tabPanel */
+    tabPanelListener : Function[] = [];
     /**tableau des erreurs par tab
      * (true si il ya des erreurs, false sinon) */
     tabErrors : boolean[] = [];
@@ -102,7 +110,7 @@ export class TabsLite extends React.Component<TabsLiteProps, any> {
      * change l'onglet actif
      * @param index index de l'onglet a activé
      */
-    setActiveTab = (index: number) : void => {
+    setActiveTab = (index: number, afterShowTab: Function = noop) : void => {
         const correctedTabIndex = index > this.tabRefs.length - 1 ? 0 : index < 0 ? this.tabRefs.length - 1 : index;
         const cb =
             this.getActiveTab() === correctedTabIndex
@@ -110,6 +118,7 @@ export class TabsLite extends React.Component<TabsLiteProps, any> {
                 : () => {
                       this.props.onTabChange(correctedTabIndex);
                       this.setFocusOnTab();
+                      afterShowTab();
                       if (this.props.afterShowTab) this.props.afterShowTab(index);
                   };
         if (this.props.beforeHideTab) this.props.beforeHideTab(index);
@@ -172,6 +181,7 @@ export class TabsLite extends React.Component<TabsLiteProps, any> {
      */
     tabRef = (ref: HTMLElement, index: number) : void => {
         this.tabRefs[index] = ref;
+        
     }
 
     /**
@@ -180,7 +190,12 @@ export class TabsLite extends React.Component<TabsLiteProps, any> {
      * @param index index du tabPanel
      */
     tabPanelRef = (ref: HTMLElement, index: number) : void => {
+        if(!ref && this.tabPanelRefs[index]) {
+            this.tabPanelRefs[index].removeEventListener('focus', this.tabPanelListener[index] as any, true);
+        }
         this.tabPanelRefs[index] = ref;
+        this.tabPanelListener[index] = listen.bind(this, index);
+        ref && ref.addEventListener('focus', this.tabPanelListener[index] as any, true);
     }
 
     /**

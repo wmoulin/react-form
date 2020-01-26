@@ -65,12 +65,17 @@ export class InputField extends React.Component<Props, State> {
     /**
      * Surcharge de la méthode
      * @param value
+     * @param {any | function} additionalInfos
      * @returns {InputField}
      */
-    setErrors(errors: any[]): void {
-        this.setState({ errors }, () => {
-            this.element.current.dispatchEvent(new CustomEvent('errors', { 'detail': {errors, name: this.props.name} }));
-        });
+    setErrors(errors: any[], additionalInfos?: any): void {
+        if (typeof additionalInfos == "function") {
+            this.setState({ errors }, additionalInfos);
+        } else {
+            this.setState({ errors }, () => {
+                this.element.current.dispatchEvent(new CustomEvent('errors', { 'detail': {errors, name: this.props.name, stopOnFirst: true, ...(additionalInfos || {})} }));
+            });
+        }
     }
 
     setFocus = () => {

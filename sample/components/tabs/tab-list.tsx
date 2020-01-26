@@ -27,7 +27,7 @@ export type TabListItemProps = {
 
 export const TabListView: React.SFC<TabListProps> = ({ id, activeTab, onTabClick, onTabKeyDown, tabRef,
      addTabFunction, addButtonTitle, deleteButtonTitle, deleteTabFunction, tabErrors= [], children, ...rest }) => (
-    <div role="tablist" id={`${id}-tablist`} {...rest}>
+    <div role="tablist" id={`${id}-tablist`} {...rest} >
         {React.Children.map(children, (child, index) => {
             if (React.isValidElement<any>(child)) {
                 const isActive = typeof activeTab === "number" ? index === activeTab : child.props.name === activeTab;
