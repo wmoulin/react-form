@@ -163,6 +163,8 @@ export default function useNotifyAjvError(notifId, id, formMessages, formContext
      * @return {Notifications} les notifications correspondant aux erreurs de validation
      */
     function getErrors(errors: Array<ErrorObject>, fields: { [ key: string ]: Element[] }, fieldsMessages?: any, genericValidationMessages?: any): Notifications {
+        
+        
         const notificationsError: Notifications = new Notifications();
 
         for (let index: number = 0; index < errors.length; index++) {
@@ -174,16 +176,16 @@ export default function useNotifyAjvError(notifId, id, formMessages, formContext
 
             let message: string = null;
             if (fieldName) {
-
+                let element = fields[ fieldName ] ? fields[ fieldName ][0] : undefined;
                 erreurNotification.anchor = fieldName + "_anchor";
                 erreurNotification.field = fieldName;
                 erreurNotification.additionalInfos = error.params;
-                (erreurNotification as any).element = fields[ fieldName ][0];
+                (erreurNotification as any).element = element;
 
                 let complement: any = { ...error.params };
 
                 // Gestion des champs editables d'un tableau
-                if (fields[ fieldName ] && (fields[ fieldName ][0] as any).props && (fields[ fieldName ][0] as any).props.title) {
+                if (element) {
                     const data = fieldName.split(".");
                     if (!isNaN(data[ data.length - 2 ] as any)) {
                         fieldName = data[ data.length - 1 ];
@@ -191,7 +193,7 @@ export default function useNotifyAjvError(notifId, id, formMessages, formContext
                     }
                 }
 
-                message = extractMessage(error.keyword, fieldName, fieldsMessages, genericValidationMessages, complement, fields[ fieldName ][0]);
+                message = extractMessage(error.keyword, fieldName, fieldsMessages, genericValidationMessages, complement, element);
                 if (message) {
                     /* Surcharge du message produit par ajv */
                     erreurNotification.text = message;

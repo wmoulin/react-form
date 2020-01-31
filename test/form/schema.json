@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "title": "test validation",
+  "description": "Validation des données de formulaire",
+  "type": "object",
+  "required": [
+    "input",
+    "InputField",
+    "InputField1",
+    "InputField2",
+    "InputField3"
+  ],
+  "properties": {
+    
+  }
+}

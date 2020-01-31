@@ -92,10 +92,6 @@ export class Event<EventDetailInterface> extends BaseEvent {
     }
 }
 
-if (!Utils.isServer) {
-  nodeUtil.inherits(BaseEvent, Event);
-}
-
 export function listenWindowEvent(eventName: string, callback: EventListener, capture: boolean = true) {
     window.addEventListener(eventName, callback, capture);
 }

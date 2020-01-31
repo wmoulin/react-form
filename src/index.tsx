@@ -19,21 +19,19 @@ export type FormProps = {
     sticky?: boolean;
     omitNull?: boolean;
     calendarLocale?: {dateFormat: any, timeZone: any};
+    addMarkRequired?: boolean;
 } | any;
 
 export const Form: React.FC<FormProps> = (props: FormProps) => {
     
-    const [markRequired, setMarkRequired] = React.useState(props.markRequired || false);
+    const [markRequired, setMarkRequired] = React.useState(props.addMarkRequired || false);
     const fromElt = React.useRef(null);
     const apiRef = React.useRef({} as FormAPI);
     apiRef.current.form = fromElt as any;
-    //const {extractData, extractFields} = getExtractData(fromElt);
-    //const {notifyErrors, cleanFormErrors} = useMessageError(fromElt, i18nMessages, extractFields, props.notifId, props.id, props.formMessages);
+
     useAjvValidator(props.schema, props.validationOptions, props.customValidators, props.onBeforeSubmit, props.onSubmit, props.calendarLocale, apiRef);
     useNotifyAjvError(props.notifId, props.id, props.formMessages, apiRef);
 
-    //const validateAndSubmit = useAjvValidator(props.schema, props.validationOptions, props.customValidators, props.onBeforeSubmit, props.onSubmit, props.calendarLocale, extractData, notifyErrors, cleanFormErrors);
-    // TODO || I18nUtils.getI18n("calendar", undefined, i18nMessages)
     logger.debug("Form render : ", props.id);
 
     /*
@@ -42,10 +40,14 @@ export const Form: React.FC<FormProps> = (props: FormProps) => {
      */
     /* La validation de formulaire HTML 5 est désactivée (noValidate="true") :
      on s'appuie uniquement sur la validation à la soumission et on a ainsi un rendu cohérent entre navigateurs. */
-
-     const formProps = {...props,  // TODO filter form attributes
+    const { omitNull , sticky, calendarLocale, addMarkRequired, ...domProps} = props;
+    const formProps = {...domProps,
         method: "post",
-        onSubmit: debounce(() => {apiRef.current.validateAndSubmit()}, 300),
+        onSubmit: debounce(() => {
+            logger.debug("Form validateAndSubmit : ", props.id);
+
+            apiRef.current.validateAndSubmit()
+        }, 300),
         ref: fromElt,
     };
 
@@ -93,7 +95,7 @@ export const Form: React.FC<FormProps> = (props: FormProps) => {
 
 Form.defaultProps = {
     sticky: false,
-    markRequired: true,
+    addMarkRequired: true,
     omitNull: true
 } as Partial<FormProps>;
 

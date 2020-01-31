@@ -4,7 +4,7 @@ import { Tabs } from "src/widget/tab/tabs";*/
 
 import { I18nUtils } from "hornet-js-utils/src/i18n-utils";
 import { Utils } from "hornet-js-utils";
-const messages = require("src/ressources/messages.json");
+const messages = require("../../../src/ressources/messages.json");
 const i18nMessages = Utils.getCls("hornet.internationalization") || messages;
 
 import "./sass/notification.scss";

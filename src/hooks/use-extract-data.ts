@@ -79,7 +79,7 @@ export default function useExtractData(formContext:any=useContext(FormContext)) 
                     }
                 }
             }
-            Object.keys(formContext.current.fields).forEach((name) => {
+            formContext.current.fields && Object.keys(formContext.current.fields).forEach((name) => {
                 fields[name] = [formContext.current.fields[name].ref];
             });
             return fields;

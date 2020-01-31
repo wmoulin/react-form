@@ -7,11 +7,11 @@ import { Class } from 'hornet-js-utils/src/typescript-utils';
 export const RegisterField: Class<React.Component<any>> = (WrappedComponent: React.ComponentType<any>, props: any, fieldOptions?: FieldOptions<any>) => {
     
   const displayName = WrappedComponent.displayName || WrappedComponent.name || "WrappedComponent";
-  const refContainer = useRef();
   
   // Creating the inner component. The calculated Props type here is the where the magic happens.
   return () => {
     
+    const refContainer = useRef();
     const formContext = useContext(FormContext);
     const { register, unregister } = useFormField();
 
